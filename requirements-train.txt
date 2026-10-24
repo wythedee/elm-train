@@ -1,0 +1,11 @@
+# Install torch==2.5.1 from the cu124 index separately; see README.
+transformers==4.57.6
+numpy==1.26.4
+pandas==2.3.3
+scipy==1.15.3
+scikit-learn==1.7.2
+einops==0.8.2
+h5py==3.16.0
+mne==1.12.1
+safetensors==0.8.0
+tokenizers==0.22.2
