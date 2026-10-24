@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "baseline_run": "oracle4b80_simple_20261024_s1014",
+  "baseline_source_sha256": "81c0a14930e7f5cf3c457b398a320f55298086e5ab4b3c932b675749450d4a60",
+  "baseline_protocol_sha256": "0d1684c3742f2d1b4307730d1be36abf854d88b7207ccf4ffe05ff9f6c21ab05",
+  "source_files": [
+    {
+      "upstream_path": "code_release/build_oracle_export_20261024.py",
+      "original_sha256": "486dcc577560c2ead98330788c9a0d2a3a48047d778e44bc491bfab8a5506db9",
+      "snapshot_path": "reference/code_release/build_oracle_export_20261024.py",
+      "snapshot_sha256": "bde06e0b1b23a639544761a90a66914c1d27d847a80e5fa30846ec70d3b83af2",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/eeg_projector80_4b_v1.py",
+      "original_sha256": "cb796c1da02e69efd05f76b8abeba8d536514267dd44cbd286f8bad34748a6af",
+      "snapshot_path": "reference/experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/eeg_projector80_4b_v1.py",
+      "snapshot_sha256": "393c4f06261fbc8f0243281d31ed463a1a220e06f614578689c81ff9b1ee15ea",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/simple_candidates_1024_v1.py",
+      "original_sha256": "c804e151b38139c8aa0e0f5ab184e5736bd66030e0a0c36322f52aebc0d8bf64",
+      "snapshot_path": "reference/experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/simple_candidates_1024_v1.py",
+      "snapshot_sha256": "f9f57734317428707f642aa84abff32ad883a110efcf450f03105288f6a47138",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/simple_oracle_tasks_v2.py",
+      "original_sha256": "2ef6e36830ff412cc575458b653afabba031cb773a44366be2efd481048a5360",
+      "snapshot_path": "reference/experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/simple_oracle_tasks_v2.py",
+      "snapshot_sha256": "6fe4fd11bc785b4f000e65d5cab9626580d63867ffce069820f5a43d3339a93d",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/simple_task_validator_v1.py",
+      "original_sha256": "ba089909f5249d1fbaec82eb40e9a710795fcabe01259f8197aff1f506cc2804",
+      "snapshot_path": "reference/experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/simple_task_validator_v1.py",
+      "snapshot_sha256": "8e800300817ca56bbe00a55c1688b978ae1a7a116da9def6a8ed23825b903f9f",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/template_contract.json",
+      "original_sha256": "e2b18af2e9ad625029a96fcb6f02731e545cd048518059b969b8fdb2ca138b7e",
+      "snapshot_path": "reference/experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/template_contract.json",
+      "snapshot_sha256": "e2b18af2e9ad625029a96fcb6f02731e545cd048518059b969b8fdb2ca138b7e",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": false
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/eeg_align4b80_simple_1024_v1.py",
+      "original_sha256": "5c44247be3b4c9736361e52c8218fedfb122fffb511974bf9c39d1f7e75abe4c",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/eeg_align4b80_simple_1024_v1.py",
+      "snapshot_sha256": "31a323db3f64f6e243cfb0d1722e3692b571f8f8e5cf1cfed11eed8179a8d691",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/native_channel_alignment.py",
+      "original_sha256": "7fa7678aa19378d3217347e3ca70a2ad8a938847fd47ead09d6b320b54e124c4",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/native_channel_alignment.py",
+      "snapshot_sha256": "b9838b045078e818270710db02e0263cadc392b5034f46e344fb50fdfa81dc39",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/oracle4b80_simple_1024_v1.py",
+      "original_sha256": "81c0a14930e7f5cf3c457b398a320f55298086e5ab4b3c932b675749450d4a60",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/oracle4b80_simple_1024_v1.py",
+      "snapshot_sha256": "0028df2e81b90ce66b262c4083b9598c68aa08c7dc072b2afb15c09f68354a0e",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/oracle_curriculum28_1016_v3.py",
+      "original_sha256": "a928ccb4660d222c9d73cc0eff30db6a5581b5344488a1eacc07104c720956c8",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/oracle_curriculum28_1016_v3.py",
+      "snapshot_sha256": "e57b91a4cf712d31511e30d07a7b3eae8bce1de7f0807d45bb7ffc326cfb3cc2",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/oracle_curriculum28_tasks_1016.py",
+      "original_sha256": "a7dd325fdf8d2472074221bb68a9d075dac4eb1dc9e63962b310c0353687ef4f",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/oracle_curriculum28_tasks_1016.py",
+      "snapshot_sha256": "610628ff2bb13d4d43fef161878e8a2abef6af7b468bc70bc3005b66b4f70e4a",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/oracle_curriculum28_tasks_1016_v2.py",
+      "original_sha256": "ca419cd0c20508370c0713bfe7b2368e4606dd02630cf073c641e742eaf71df6",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/oracle_curriculum28_tasks_1016_v2.py",
+      "snapshot_sha256": "4d929591f98053892bbea1835f0a2296c70d49455e8146e07d974c904339a502",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/oracle_curriculum28_tasks_1016_v3.py",
+      "original_sha256": "8a42867098d44abf3bf19a66865b177957f412835f912c6b87738637bb2dc7d5",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/oracle_curriculum28_tasks_1016_v3.py",
+      "snapshot_sha256": "5c8ec19ed0253193be48ab3f456dd477db62fa0559243dca2f9a8bf5194f00a6",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/oracle_robust28_1016.py",
+      "original_sha256": "3eaf3b149beee2f13113fc00de2c30fd8ba689e60456de4cdfded8af345292a6",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/oracle_robust28_1016.py",
+      "snapshot_sha256": "74e8aa7db8f784cf3587042672baff4e1c29aa3de82417715e549831dc40524b",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/reason_sleep_1015.py",
+      "original_sha256": "b318e5bd2b391d2e5e89747c472c56f56ef75f1b6ff02a236f0ee6e4d066b0ce",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/reason_sleep_1015.py",
+      "snapshot_sha256": "53e47c9ac8b07503e7a5ac00e652e394702eef220320438b5f1ba8dec87391a3",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/stat_compact28_1015_v3.py",
+      "original_sha256": "70f55a2f7f9c6608061996bd38b8ffacbe69ec78f54452d800918dbd33cc6c44",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/stat_compact28_1015_v3.py",
+      "snapshot_sha256": "1d3674c7884463715b1a5780617aeb4eade42f003130f0daaf2d8ef2a35d332e",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/stat_joint28_1015.py",
+      "original_sha256": "3a6af97b3880daa9730bce7b6293e83f3ae2e3f8e5365598ee1a3dccae77b0b1",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/stat_joint28_1015.py",
+      "snapshot_sha256": "00ea4f63061627d7c32ee785d8df179564f40e438c552a36cef858f407a69895",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/statsem_1014_data.py",
+      "original_sha256": "06467016adf4cfaabb94992a98914a4eb60f6090b4de05b86b373b55e615fd3a",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/statsem_1014_data.py",
+      "snapshot_sha256": "8df9f65cfd16fac1d8206b5e73fd9b783fb6d50e76fd4c9609a10beda21cc967",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/statsem_1014_train.py",
+      "original_sha256": "a7cabf9acb3aa495695cac5ee559393e11d119010e5ad8a3c94f9ac1c912c91a",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/statsem_1014_train.py",
+      "snapshot_sha256": "a2a84ceedf6eb6a9a5711e7f3e81605aa16aef9be3aa1a58507fd38eb20ff454",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true,
+      "trailing_blank_lines_normalized": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/train_cbramod_cross_attention_classifier.py",
+      "original_sha256": "8a4154cfa2fa909fe5467106779d2ec6ac7f6b99f965b8fe4822ab47b76e92a8",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/train_cbramod_cross_attention_classifier.py",
+      "snapshot_sha256": "b60ba4d0e03c5b5cc766f7a39e0b489532a81ff7a815c93ff223b247e752f1c2",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    },
+    {
+      "upstream_path": "experiments/mainline_vrl/scripts/python/train_cbramod_task_router.py",
+      "original_sha256": "a1cbfddca17f1ca4c57699f4ee59e1fbe2fd90a1af74bca51e682cf2657bca59",
+      "snapshot_path": "reference/experiments/mainline_vrl/scripts/python/train_cbramod_task_router.py",
+      "snapshot_sha256": "19ef9a27ea5f1f5729df080b66579abc06f00392dce648b9b76bc280bd074d56",
+      "all_function_and_class_AST_unchanged": true,
+      "entrypoint_guard_added": true
+    }
+  ],
+  "no_data_or_weights_included": true
+}

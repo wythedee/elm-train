@@ -1,0 +1,59 @@
+{
+  "status": "proposal_not_launched",
+  "common": {
+    "model": "original Qwen3-4B frozen",
+    "steps": 3600,
+    "rounds": 6,
+    "steps_per_round": 600,
+    "seed": 1014,
+    "batch_size": 8,
+    "micro_batch_size": 1,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "anchor_weight": 0.0001,
+    "teacher": "Same closedbaseline unassisted4B correctTrain examples; all1744Val queries retained",
+    "subject_split": "Unchanged original16-domain subject and sampleIDs",
+    "native_initializer": "Freshnative4B semantic init; no trainedweightwarmstart",
+    "primary_comparison_checkpoint": "last3600",
+    "secondary_checkpoint": "fixedValTF240CE selectedbest; separatelylabelled",
+    "gate": "Fourtypes text-correct Valexact>=.90,support>=16;fullreport exact>=.90;frozencoverage"
+  },
+  "cases": {
+    "A_baseline": {
+      "label_tokens": 32,
+      "stat_tokens_each": 8,
+      "total_tokens": 80,
+      "KL_coefficient": 0.5,
+      "report_objective_multiplier": 1,
+      "role": "Closedbaseline reference on currentA100 server; no automatic rerun"
+    },
+    "B_report4": {
+      "label_tokens": 32,
+      "stat_tokens_each": 8,
+      "total_tokens": 80,
+      "KL_coefficient": 0.5,
+      "report_objective_multiplier": 4,
+      "role": "Proposed:report example(CE+.5KL)x4; unchanged unweightedanchor"
+    },
+    "C_tokens160": {
+      "label_tokens": 64,
+      "stat_tokens_each": 16,
+      "total_tokens": 160,
+      "KL_coefficient": 0.5,
+      "report_objective_multiplier": 1,
+      "role": "Proposed:fixedlabel/stat quota ratio doubled;capacity andpositionscoupled,notpurelengthcausality"
+    },
+    "D_CEonly": {
+      "label_tokens": 32,
+      "stat_tokens_each": 8,
+      "total_tokens": 80,
+      "KL_coefficient": 0,
+      "report_objective_multiplier": 1,
+      "role": "Proposed:correctteacher answerCE+sameanchor;noKLorstudentrolloutCE"
+    }
+  },
+  "baseline_snapshot_verified": true,
+  "portable_training_launcher_implemented": false,
+  "new_variant_GPU_smoke_and_explicit_launch_still_required": true,
+  "EEG_not_auto_dispatched_from_this_code_bundle": true
+}

@@ -1,0 +1,105 @@
+{
+  "status": "preparation_only_not_generated_questions",
+  "purpose": "Offline 27B authoring of simple diverse EEG statistical questions; 4B remains frozen answer model",
+  "operations": {
+    "read_level": {
+      "records": 1,
+      "result_values": [
+        "low",
+        "mid",
+        "high"
+      ],
+      "meaning": "Return the named statistical field's ordinal bin for A"
+    },
+    "compare_level": {
+      "records": 2,
+      "result_values": [
+        "lower",
+        "equal",
+        "higher"
+      ],
+      "meaning": "Compare record A's ordinal bin to record B's for the same named field"
+    },
+    "choose_higher": {
+      "records": 2,
+      "result_values": [
+        "A",
+        "B",
+        "tie"
+      ],
+      "meaning": "Select the record with the higher ordinal bin or tie for the same bin"
+    },
+    "choose_lower": {
+      "records": 2,
+      "result_values": [
+        "A",
+        "B",
+        "tie"
+      ],
+      "meaning": "Select the record with the lower ordinal bin or tie for the same bin"
+    }
+  },
+  "field_names": [
+    "alpha_relative_power",
+    "theta_beta_ratio",
+    "spectral_entropy",
+    "hjorth_mobility",
+    "hjorth_complexity",
+    "line_length"
+  ],
+  "ordinal_levels": [
+    "low",
+    "mid",
+    "high"
+  ],
+  "output_schema": {
+    "answer": "one allowed string, as defined by operation"
+  },
+  "placeholders": [
+    "{field}",
+    "{record_a}",
+    "{record_b}"
+  ],
+  "templates_per_operation": 24,
+  "template_row_keys": [
+    "template_id",
+    "operation",
+    "wording",
+    "answer_options",
+    "intended_direction",
+    "tie_semantics"
+  ],
+  "language": "English to match the existing frozen 4B task language; wording diversity, not multilingual claim",
+  "constraints": [
+    "Use only one statistical field per question, at most two records, one operation, and a short direct answer.",
+    "Vary natural phrasing, imperative versus interrogative forms, and mention order. Do not add logical chains, distracting paragraphs, patient histories or clinical recommendations.",
+    "Use placeholders for field and record identifiers. Do not put observed values, a gold answer or a reference solution into the question.",
+    "Define equal/tie as identical ordinal bins, not identical raw values.",
+    "Generated metadata must exactly match the requested operation. Do not change target semantics when paraphrasing.",
+    "Return a JSON object with key templates containing template rows. No additional prose.",
+    "Questions must remain valid for every possible ordinal-bin assignment; do not presume one record is higher.",
+    "Do not produce a final filled EEG report; this is template authoring only."
+  ],
+  "validation": {
+    "structural_contract": true,
+    "exhaustive_text_cases_per_template": {
+      "read_level": 3,
+      "compare_level": 9,
+      "choose_higher": 9,
+      "choose_lower": 9
+    },
+    "answer_generator": "deterministic ordinal comparison in Python; never accept model-written labels as ground truth",
+    "generator_authorship_required": true,
+    "raw_generator_outputs_required": true,
+    "downstream_model": "original Qwen3-4B",
+    "template_screen_has_no_answers_in_input": true
+  },
+  "proposed_generation": {
+    "temperature": 0.8,
+    "top_p": 0.95,
+    "max_new_tokens": 8192,
+    "seed": 1014
+  },
+  "model_identity": null,
+  "endpoint": null
+}

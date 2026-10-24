@@ -1,0 +1,19 @@
+{
+  "python": "3.10.20",
+  "packages": {
+    "torch": "2.5.1",
+    "transformers": "4.57.6",
+    "numpy": "1.26.4",
+    "pandas": "2.3.3",
+    "scipy": "1.15.3",
+    "scikit-learn": "1.7.2",
+    "einops": "0.8.2",
+    "h5py": "3.16.0",
+    "mne": "1.12.1",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2"
+  },
+  "no_packages_installed": true,
+  "cuda_visible_device_admission": "actualfree26GiB train/24GiB AR,3samples10secondsapart;8GiB physicalreserve,12GiB diskreserve",
+  "copied_environment_not_included": true
+}

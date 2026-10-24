@@ -1,0 +1,11 @@
+{
+  "created_time": 1792847181.0821347,
+  "upstream_git_HEAD": "ee58f6e3e6f46ed3c9ac941091acb6cd13deb548",
+  "baseline_run": "oracle4b80_simple_20261024_s1014",
+  "baseline_closed": true,
+  "source_snapshot_only": true,
+  "training_code_original_source_sha256": "81c0a14930e7f5cf3c457b398a320f55298086e5ab4b3c932b675749450d4a60",
+  "no_private_data_weights_environment_logs_or_per_sample_outputs_exported": true,
+  "no_current_or_old_run_modified": true,
+  "upstream_dirty_changes_not_committed": true
+}

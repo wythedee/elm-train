@@ -1,0 +1,118 @@
+{
+  "files": {
+    "experiments/eeg_vrl_demo/models/Qwen/Qwen3-4B/config.json": {
+      "role": "model",
+      "sha256": "8ba006f74fecfaaeb392872a60f4a480e7ec9860153d2e1b769ec81f9a147f8a"
+    },
+    "experiments/eeg_vrl_demo/models/Qwen/Qwen3-4B/generation_config.json": {
+      "role": "model",
+      "sha256": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2"
+    },
+    "experiments/eeg_vrl_demo/models/Qwen/Qwen3-4B/tokenizer_config.json": {
+      "role": "model",
+      "sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+    },
+    "experiments/eeg_vrl_demo/models/Qwen/Qwen3-4B/tokenizer.json": {
+      "role": "model",
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+    },
+    "experiments/eeg_vrl_demo/models/Qwen/Qwen3-4B/vocab.json": {
+      "role": "model",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    },
+    "experiments/eeg_vrl_demo/models/Qwen/Qwen3-4B/merges.txt": {
+      "role": "model",
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+    },
+    "experiments/eeg_vrl_demo/models/Qwen/Qwen3-4B/model.safetensors.index.json": {
+      "role": "model",
+      "sha256": "6dc0981b8829fead746441f68f38f24c5ca4a3a66351f652c26c6df0efc43ab2"
+    },
+    "experiments/eeg_vrl_demo/models/Qwen/Qwen3-4B/model-00001-of-00003.safetensors": {
+      "role": "model",
+      "sha256": "328a91d3122359d5547f9d79521205bc0a46e1f79a792dfe650e99fc2d651223"
+    },
+    "experiments/eeg_vrl_demo/models/Qwen/Qwen3-4B/model-00002-of-00003.safetensors": {
+      "role": "model",
+      "sha256": "6cd087b316306a68c562436b5492edbcf6e16c6dba3a1308279caa5a58e21ca5"
+    },
+    "experiments/eeg_vrl_demo/models/Qwen/Qwen3-4B/model-00003-of-00003.safetensors": {
+      "role": "model",
+      "sha256": "e4bf436957184f4eeb86a80e9db394503f1f56446b2e6b7edeac5b81470f4ca1"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/native4b_init28.pt": {
+      "role": "initialization",
+      "sha256": "95ee9ae03bb64879c384f6c29149cf362526c6870aafa59884762364d923b836"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/oracle_init.pt": {
+      "role": "initialization",
+      "sha256": "10541a31735faf3fcd866989f68b152c00adfdc24f402956a0514b66a6f0e437"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/train_candidates.json": {
+      "role": "initialization",
+      "sha256": "734ea37fe3dacab521623eebd527b29e0c9db8d00b741d6d079cac2350a24c42"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/val_candidates.json": {
+      "role": "initialization",
+      "sha256": "a52054e4749858fa4dd0edd6abacbeafe9c9ded0ced148b2e0f65b9f224b0961"
+    },
+    "experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/screen_qwen3_4b_v6/normalized/templates.json": {
+      "role": "initialization",
+      "sha256": "893174c5307efde52a91df67eed4d5396262d9b32f7f46c2b1339886a9b748d0"
+    },
+    "experiments/mainline_vrl/plans/diagnostics/oracle4b_learnability_20261024_s1014/screen_qwen3_4b_v6/inputs/wording_partition.json": {
+      "role": "initialization",
+      "sha256": "f0ea0e13d8cb023167ef2d37bedd4cb18e7beb9530640dd3b7c353c4acc30aea"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/teacher/round_0_bank.json": {
+      "role": "private_task_or_teacher_data",
+      "sha256": "fcfc2351c4b36ff959e0ca90bf53a24528dfd4ebab2d2ab1f4cb0da1787fcbbb"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/teacher/round_1_bank.json": {
+      "role": "private_task_or_teacher_data",
+      "sha256": "50e46adc548f2358e5d032170b897d576b3d7dbbaf1415612c3966b2f0dde358"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/teacher/round_2_bank.json": {
+      "role": "private_task_or_teacher_data",
+      "sha256": "a7c9406fdfd0531ac03bf7d26a9719b38367c5282a6402164d57130d534e236c"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/teacher/round_3_bank.json": {
+      "role": "private_task_or_teacher_data",
+      "sha256": "6bc78a78d9d6ab638178704d6333ae7dd73b609057356ad380bc895217687af6"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/teacher/round_4_bank.json": {
+      "role": "private_task_or_teacher_data",
+      "sha256": "87759c6623c3b41e39143c3117b6a39c3f07e3ef407b199641a2f87980a15625"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/teacher/round_5_bank.json": {
+      "role": "private_task_or_teacher_data",
+      "sha256": "0cffd0310864c28b5ec3a5637604f6ee4c6732d8e9b6d244049b5b84e1dc6d0e"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/val_plan.json": {
+      "role": "private_task_or_teacher_data",
+      "sha256": "a52054e4749858fa4dd0edd6abacbeafe9c9ded0ced148b2e0f65b9f224b0961"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/tf_val.json": {
+      "role": "private_task_or_teacher_data",
+      "sha256": "96a7652226a4b1b7b9cc1cd3711e0eae35a5001817aeac1f0796b989a08abd00"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/teacher/summary.json": {
+      "role": "private_task_or_teacher_data",
+      "sha256": "9e439f093a1549e1c4591460f7ed0b2310f3fe2dcbc7aa5bfcafb66c80ebb21c"
+    },
+    "experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/label32_stat8/teacher/val_text_raw.json": {
+      "role": "private_task_or_teacher_data",
+      "sha256": "e49789c6cae7db297afb2e043e163d2f644586d8f99ec398ec3056e8223106bb"
+    },
+    "experiments/mainline_vrl/runs/stat_sleep_20261014_s1014/statistics/data/train_records.json": {
+      "role": "private_EEG_derived_metadata",
+      "sha256": "7f3ba2407d0e0931d4caa78a36fc309aa11dab4cbfa09b26a984c0ef8c96d625"
+    },
+    "experiments/mainline_vrl/runs/stat_sleep_20261014_s1014/statistics/data/val_records.json": {
+      "role": "private_EEG_derived_metadata",
+      "sha256": "f9a8db986667130c1e547a4d1fcb23522113bea8d39998ba682d674042d2daa7"
+    }
+  },
+  "waveform_required_for_Oracle_stage": false,
+  "original_EEG_features_required_for_later_alignment": true
+}
