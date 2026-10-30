@@ -1,0 +1,27 @@
+{
+  "scope": "Historical Native200 preprocessing manifests; counts are reference values, not mandatory raw-data SHA identities or evidence of uncapped full-data training.",
+  "split_order": ["train", "val", "test"],
+  "datasets": {
+    "ADFTD": {"records": [2560, 480, 480], "subjects": [64, 12, 12]},
+    "ATTEN_GONOGO": {"records": [2304, 720, 720], "subjects": [16, 5, 5]},
+    "CHB_MIT": {"records": [1328, 160, 160], "subjects": [17, 2, 2]},
+    "HEBIN2021_NATIVE200_LR": {"records": [87543, 17774, 19575], "subjects": [39, 9, 9]},
+    "HMC_SLEEP": {"records": [20878, 4560, 4600], "subjects": [105, 23, 23]},
+    "MUMTAZ_MDD": {"records": [4857, 1166, 1060], "subjects": [43, 10, 10]},
+    "NEMAR_MDD": {"records": [1676, 320, 320], "subjects": [42, 8, 8]},
+    "PHYSIONET_4CLASS": {"records": [12555, 3429, 3587], "subjects": [70, 19, 20]},
+    "REEG_PD": {"records": [3183, 649, 662], "subjects": [105, 22, 22]},
+    "SCHIRR_LR": {"records": [3660, 1560, 1520], "subjects": [8, 3, 3]},
+    "SEED_BINARY": {"records": [2970, 540, 540], "subjects": [11, 2, 2]},
+    "SHIN_NATIVE_LR": {"records": [1200, 300, 240], "subjects": [20, 5, 4]},
+    "TUAB": {"records": [76760, 15360, 27600], "subjects": [1452, 312, 565]},
+    "TUEP": {"records": [62684, 10849, 7421], "subjects": [140, 30, 30]},
+    "TUEV": {"records": [2907, 811, 2203], "subjects": [232, 58, 80]},
+    "TUSZ": {"records": [26561, 2796, 1757], "subjects": [579, 53, 43]}
+  },
+  "limitations": [
+    "MUMTAZ_MDD and NEMAR_MDD share source participants; their historical independent splits are not globally subject-disjoint.",
+    "Clinical preprocessing used window caps; equal row counts do not establish equal preprocessing or full raw coverage.",
+    "Cross-version patient/case identity mappings need further review before formal generalization claims."
+  ]
+}

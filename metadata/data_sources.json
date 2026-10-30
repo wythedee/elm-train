@@ -1,5 +1,7 @@
 {
-  "protocol": "Native200, original16-domain subject-disjoint Train/Val; no newTest in this diagnostic",
+  "protocol": "Archived Native200 16-domain Oracle diagnostic; per-source Train/Val split. Known Mumtaz/NEMAR shared-cohort cross-split overlap means global subject isolation is not established. No new Test.",
+  "known_cohort_aliases": [["MUMTAZ_MDD", "NEMAR_MDD"]],
+  "global_subject_isolation_verified": false,
   "datasets": [
     "PHYSIONET_4CLASS",
     "HEBIN2021_NATIVE200_LR",
@@ -48,5 +50,5 @@
     "choose_lower"
   ],
   "same_bin_is_not_equal_continuous_value": true,
-  "current_stage": "Oracle facts-to-soft-prefix diagnostic; no rawwaveform as Oracle forwardinput; EEG alignment not started"
+  "current_stage": "This metadata describes the archived Oracle release, not the later private EEG Projector debug runs. No raw waveform is used as the Oracle forward input."
 }
