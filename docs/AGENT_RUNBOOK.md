@@ -2,6 +2,10 @@
 
 ## Readiness and scope
 
+For the collaborator's first H20 run, start with [H20_HANDOFF.md](H20_HANDOFF.md).
+It defines the immediate job, order, stop conditions and private return artifacts;
+this document supplies the lower-level commands and interfaces.
+
 Read `PIPELINE_STATUS.md` and `NEXT_DAY_PLAN.md` before scheduling hardware. The
 old `tools/reproduce.py` is an archived Oracle-only experiment. It is not the new
 EEG training pipeline. The new entry point is `python -m elm_pipeline.cli`.
