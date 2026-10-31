@@ -119,8 +119,10 @@ GitHub 提供代码、配置模板、环境、数据适配说明、命令、验�
 4B 从官方模型仓库获取。安全权重只包含推理所需 state，不含 optimizer；需要严格
 续训时另行提供训练状态，不能把“只加载权重”描述为严格连续训练。
 
-原始 EEG、缓存特征、个人逐样本输出和 Token 不进入 public Git。ModelScope 文件
-尚未发布时，指南必须标明待提供，不能给出不存在的下载文件或自动换模型。
+原始 EEG、缓存特征、个人逐样本输出和访问令牌不进入 public Git。四份推理权重现已
+发布到 ModelScope `wythedee/elm/releases/20261031/`，用途及配置见
+[CHECKPOINTS](CHECKPOINTS.md)。这不包括全量题库、原始 EEG 或完整优化器/RNG 恢复状态，
+不能把现有权重发布当作新大批次 Oracle 或全量数据阶段已经就绪。
 
 ## H20 Oracle 扩大训练提案
 

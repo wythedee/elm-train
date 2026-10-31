@@ -1,0 +1,41 @@
+{
+  "software_debug": true,
+  "allow_known_legacy_overlap_for_debug": false,
+  "output": "/work/elm-runs/report6600_eval",
+  "features": "/work/elm-features/report6600_eval",
+  "tmpdir": "/work/elm-tmp/r6600",
+  "manifest_root": "/work/elm-data/manifests",
+  "encoder_bundle": "/work/elm-models/elm/releases/20261031/encoders",
+  "model": "/work/elm-models/Qwen3-4B",
+  "oracle": "/work/elm-models/elm/releases/20261031/oracle/oracle10200.safetensors",
+  "schema": "/work/elm-models/elm/releases/20261031/data_schema.json",
+  "thresholds": "/work/elm-models/elm/releases/20261031/thresholds.json",
+  "datasets": [
+    "ADFTD"
+  ],
+  "splits": [
+    "train",
+    "val"
+  ],
+  "path_map": {},
+  "data_root": "/work/elm-data",
+  "per_dataset_limit": 2,
+  "shard_records": 1024,
+  "max_bad_records": 0,
+  "train_steps": 0,
+  "save_every": 30,
+  "seed": 1014,
+  "lr": 1e-05,
+  "ce_weight": 1.0,
+  "alignment_weight": 1.0,
+  "oracle_positive_control": true,
+  "gpus": [
+    2
+  ],
+  "stage_seconds": 2400,
+  "total_seconds": 7200,
+  "train_python": "/work/envs/elm-train/bin/python",
+  "ar_backend": "v1",
+  "ar_python": "/work/envs/elm-ar-v1/bin/python",
+  "evaluation_checkpoint": "/work/elm-models/elm/releases/20261031/projector/projector_report6600.safetensors"
+}

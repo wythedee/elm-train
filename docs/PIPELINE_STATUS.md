@@ -184,3 +184,20 @@ accuracy improvement. See [installation, counts and timing](VLLM_UPGRADE.md).
 The training runtime, losses and frozen weights were not changed. No new optimizer
 steps or Test generation were performed. This acceptance covers only the fixed
 32-EEG software subset; full Val, full-corpus training and H20 remain unverified.
+
+## Published component weights, 2026-10-31
+
+The two frozen Encoders, Oracle10200 and EEG Projector6600 are published in
+ModelScope `wythedee/elm`, under `releases/20261031/`. All 13 uploaded files have
+matching remote sizes/full SHA values. The public no-token downloader was tested
+on NORVE: all four complete weight files and six configs were downloaded and
+full-SHA verified, then checked again offline. The model cards/manifest and real
+Range transport were also checked. No GPU execution or new optimizer steps were
+needed. See [checkpoint roles and commands](CHECKPOINTS.md) and the
+[publication verification](../metadata/checkpoint_publication_verification.json).
+
+This release provides inference/initialization weights, not private EEG, cached
+features, archived Oracle training data or optimizer/RNG states. Use the trained
+6600 Projector for evaluation; use fresh same-seed Projectors for the planned
+fresh-initialization Loss comparisons. This does not change the outstanding
+full-data, raw-adapter, split-provenance or H20 acceptance limits above.

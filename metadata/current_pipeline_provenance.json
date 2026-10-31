@@ -57,7 +57,6 @@
     "full_corpus_trained": false,
     "H20_verified": false
   },
-  "private_assets_not_published": true,
   "no_EEG_records_or_per_person_outputs_in_this_metadata": true,
   "historical_acceptance_commit": "9b05d9aa29376f2fa548235bab8e632458a3a7d2",
   "inference_upgrade": {
@@ -88,5 +87,24 @@
     "statistics_mean_effective_rank": 7.922971645991008,
     "statistics_slots": 8,
     "interpretation": "No obvious geometric collapse; this does not establish independent functional roles. No optimizer steps or loss changes."
+  },
+  "inference_weights_release": {
+    "repo": "wythedee/elm",
+    "prefix": "releases/20261031",
+    "catalog": "metadata/modelscope_release.json",
+    "weight_files": 4,
+    "bytes": 1359665528,
+    "components": [
+      "class_Encoder",
+      "statistics_Encoder",
+      "Oracle10200",
+      "EEG_Projector6600"
+    ],
+    "strict_optimizer_RNG_resume_supported": false,
+    "raw_EEG_and_archived_Oracle_training_data_published": false,
+    "public_full_download_verified": true,
+    "verification_record": "metadata/checkpoint_publication_verification.json",
+    "public_download_requires_token": false,
+    "root_publication_revision": "2c105c15a31cfd31e9687b128d66f29eee3105c5"
   }
 }

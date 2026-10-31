@@ -15,6 +15,7 @@
 - [配置模板](configs/pipeline_debug.example.json)：先修改路径和被分配的 GPU，再启动。
 - [历史 Oracle 单独复现](docs/ORACLE_ARCHIVE.md)：原 3600 步编码表实验，和当前 EEG 训练入口分开。
 - [新版 vLLM 安装与验收](docs/VLLM_UPGRADE.md)：0.32 的独立环境、镜像、CUDA 配套及新旧输出对照。
+- [模型权重与使用方式](docs/CHECKPOINTS.md)：Encoder、Oracle10200、Projector6600 的下载、核验及对应配置。
 
 ## Oracle 到 EEG 的三步
 
@@ -84,7 +85,23 @@ python3 -B tools/test_reproduce.py
 
 ## 数据与模型
 
-原始 EEG、缓存、权重和环境不在 Git 中。4B 使用官方原始 Qwen3-4B；项目模型资产单独提供，未发布的文件须等待清单，不能自动换成其他模型。数据按照配置中的根目录和路径映射读取，不要求复刻原服务器的目录。
+原始 EEG、缓存、权重和环境不在 Git 中。**已训练权重发布在 [ModelScope wythedee/elm](https://modelscope.cn/models/wythedee/elm) 的 `releases/20261031/`，约1.36GB。** 4B 使用官方原始 Qwen3-4B，单独下载；数据按照配置中的根目录和路径映射读取，不要求复刻原服务器的目录。
+
+| 组件 | 对应文件 | 用途 |
+|---|---|---|
+| 两路 Encoder | `encoders/encoder_class.safetensors`、`encoders/encoder_statistics.safetensors` | 冻结提取 EEG 特征，合计约334MB |
+| Oracle10200 | `oracle/oracle10200.safetensors` | 冻结的80-token对齐目标、Oracle输入对照，约12MB |
+| Projector6600 | `projector/projector_report6600.safetensors` | 评测已有类别/统计/报告模型，约1.01GB；不作为默认fresh初始化 |
+
+```bash
+# 在授权Linux服务器下载；同时核验全部文件完整SHA，不需要令牌或额外SDK。
+python3 -B tools/download_checkpoints.py --root /work/elm-models/elm
+```
+
+匹配的标签顺序、统计阈值、通道映射和组件配置一起提供。
+[推理配置](configs/pipeline_report6600.example.json) 读取已训练6600模型且禁止优化步；
+[训练短测配置](configs/pipeline_debug.example.json) 使用冻结Encoder/Oracle并fresh初始化Projector。
+权重不含优化器/RNG，不能用它们冒充严格续训；详细步骤见[权重指南](docs/CHECKPOINTS.md)。
 
 校验优先使用条数、标签、通道/采样率/单位、窗口、受试者身份和坏样本记录，不强制所有原始文件 SHA 相同。历史清单为 Train313626 / Val61474 / Test72445，包含窗口限制及同源名称，不能直接解释为独立全量原始记录。
 

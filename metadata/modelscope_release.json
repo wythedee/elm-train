@@ -1,0 +1,75 @@
+{
+  "release_id": "20261031",
+  "repo_id": "wythedee/elm",
+  "revision": "master",
+  "repo_prefix": "releases/20261031",
+  "base_model": "Qwen/Qwen3-4B original",
+  "base_model_included": false,
+  "verified_code_commit": "f102e65aaeeb631d7cbfccb0950aef306f7eeb31",
+  "format": "safetensors plus public JSON metadata",
+  "inference_or_weight_initialization_only": true,
+  "strict_optimizer_RNG_resume_supported": false,
+  "files": {
+    "channels.json": {
+      "bytes": 1501,
+      "sha256": "e5d6b252b64041aff4860ce149993a43ca7553148cd4c31c744020edabadc9f6"
+    },
+    "data_schema.json": {
+      "bytes": 3300,
+      "sha256": "39afbbfd87a7352802d1360dea5f88e8394342c44fbd98271f0bed39704b7fc1"
+    },
+    "encoders/encoder_class.safetensors": {
+      "bytes": 313945208,
+      "sha256": "d9b6b040839df93700eb1095704aa7c805c75f67eb64a8582e82b457aff9decf",
+      "role": "class_encoder",
+      "step": null
+    },
+    "encoders/encoder_config.json": {
+      "bytes": 1130,
+      "sha256": "05e4c6cf403768a2f1d4cfddb1f1d3de97ed8daae72ef154adc0a6e912959c13"
+    },
+    "encoders/encoder_statistics.safetensors": {
+      "bytes": 19609704,
+      "sha256": "8db3b340df4e4cdefc280b96b2c2efb9832a979138a37f2246051a98674f4b67",
+      "role": "statistics_encoder",
+      "step": null
+    },
+    "oracle/oracle10200.safetensors": {
+      "bytes": 11643136,
+      "sha256": "ef28cabde1f323aad2451a2c531240095dadd2b5aea31d0e9285e886d8f49697",
+      "role": "frozen_Oracle_bank",
+      "step": 10200
+    },
+    "oracle/oracle_config.json": {
+      "bytes": 929,
+      "sha256": "8c00504cbec1050210885e705d39f04ee6e26288d3fe6653db2735fac7f56d3e"
+    },
+    "projector/projector_config.json": {
+      "bytes": 1088,
+      "sha256": "dd5246e754fb7dd99fb0e678499ac935fa3d06d15bd2946ce52e3e763ba770e0"
+    },
+    "projector/projector_report6600.safetensors": {
+      "bytes": 1014467480,
+      "sha256": "bd47cda2756bb637d2c4dfab677351bfd9142bab929030d683e2ba6d80666d6c",
+      "role": "EEG_Projector",
+      "step": 6600
+    },
+    "thresholds.json": {
+      "bytes": 701,
+      "sha256": "da494436ba00ad791f977d70f1c5eadb1968d6b25e340b067735ac0c57c26801"
+    }
+  },
+  "config_paths": {
+    "encoder_bundle": "encoders",
+    "oracle": "oracle/oracle10200.safetensors",
+    "schema": "data_schema.json",
+    "thresholds": "thresholds.json",
+    "evaluation_checkpoint": "projector/projector_report6600.safetensors"
+  },
+  "private_raw_optimizer_or_credentials_included": false,
+  "fixed_tokens": 80,
+  "hidden_size": 2560,
+  "real_EEG_classes": 30,
+  "Oracle_classes_including_synthetic": 31,
+  "validation_scope": "A100 bounded pipeline verification; original report6600 Val128 separately recorded, fullTrain and H20 not verified"
+}

@@ -5,13 +5,18 @@
   "features": "/work/elm-features/debug01",
   "tmpdir": "/work/elm-tmp/d01",
   "manifest_root": "/work/elm-data/manifests",
-  "encoder_bundle": "/work/elm-models/encoders",
+  "encoder_bundle": "/work/elm-models/elm/releases/20261031/encoders",
   "model": "/work/elm-models/Qwen3-4B",
-  "oracle": "/work/elm-models/oracle10200.safetensors",
-  "schema": "/work/elm-data/data_schema.json",
-  "thresholds": "/work/elm-data/thresholds.json",
-  "datasets": ["ADFTD"],
-  "splits": ["train", "val"],
+  "oracle": "/work/elm-models/elm/releases/20261031/oracle/oracle10200.safetensors",
+  "schema": "/work/elm-models/elm/releases/20261031/data_schema.json",
+  "thresholds": "/work/elm-models/elm/releases/20261031/thresholds.json",
+  "datasets": [
+    "ADFTD"
+  ],
+  "splits": [
+    "train",
+    "val"
+  ],
   "path_map": {},
   "data_root": "/work/elm-data",
   "per_dataset_limit": 2,
@@ -20,11 +25,13 @@
   "train_steps": 35,
   "save_every": 30,
   "seed": 1014,
-  "lr": 0.00001,
+  "lr": 1e-05,
   "ce_weight": 1.0,
   "alignment_weight": 1.0,
   "oracle_positive_control": true,
-  "gpus": [2],
+  "gpus": [
+    2
+  ],
   "stage_seconds": 2400,
   "total_seconds": 7200,
   "train_python": "/work/envs/elm-train/bin/python",

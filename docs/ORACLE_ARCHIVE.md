@@ -28,6 +28,8 @@ python3 -B tools/test_reproduce.py
 
 **数据和权重不在 Git 中。** 没有另外提供的统计清单、题库、teacher 答案和初始化文件时，只能检查代码，不能完整复现训练。所需文件的相对路径和完整 SHA 见 metadata/asset_requirements.json。
 
+新发布的 [ModelScope 推理权重](CHECKPOINTS.md) 含训练后的 Oracle10200；它不是本历史3600步复现所需的原生初始化，也不包含本档案的完整题库/Teacher资产。不要拿训练后的 bank 替换初始化文件来凑复现。
+
 ## 准备环境和数据
 
 使用 Linux、NVIDIA GPU 和 Python 3.10。训练和自回归评测使用两个独立环境，版本来自原实验：
