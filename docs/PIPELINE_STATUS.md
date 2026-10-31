@@ -170,3 +170,17 @@ unverified adapters, complete scientific evaluation, or H20 hardware.
 `metadata/current_pipeline_provenance.json` identifies the current staged module
 and its bounded acceptance scope. The older `metadata/provenance.json` and
 `source_manifest.json` identify the archived Oracle source, not this new pipeline.
+
+## vLLM 0.32 inference acceptance, 2026-10-31
+
+The isolated Python 3.11 / Torch 2.13 cu129 / vLLM 0.32 V1 inference profile has
+passed real A100 generation and independent reporting against the retained 0.9.2
+profile. Each generated 512 fixed Val answers plus four native-ID/embedding
+controls. All 512 same-query input embedding hashes matched; 504 predictions
+matched. Oracle class/statistic reads were unchanged, while its whole reports
+changed from 27/32 correct to 25/32. Preserve this difference rather than claiming
+accuracy improvement. See [installation, counts and timing](VLLM_UPGRADE.md).
+
+The training runtime, losses and frozen weights were not changed. No new optimizer
+steps or Test generation were performed. This acceptance covers only the fixed
+32-EEG software subset; full Val, full-corpus training and H20 remain unverified.

@@ -14,21 +14,32 @@
 - [下一步实验及交付计划](docs/NEXT_DAY_PLAN.md)：现有结果、数据身份修正、全量覆盖和两项 Loss 的消融。
 - [配置模板](configs/pipeline_debug.example.json)：先修改路径和被分配的 GPU，再启动。
 - [历史 Oracle 单独复现](docs/ORACLE_ARCHIVE.md)：原 3600 步编码表实验，和当前 EEG 训练入口分开。
+- [新版 vLLM 安装与验收](docs/VLLM_UPGRADE.md)：0.32 的独立环境、镜像、CUDA 配套及新旧输出对照。
+
+## Oracle 到 EEG 的三步
+
+1. **准备文字 Teacher。** 把训练样本的类别、统计信息和问题写成文字，让同一个冻结 4B 回答。程序计算标准答案；只把答对的 Train 回答作为监督，完整 Val 保留，包括文字答错的题。
+2. **训练 Oracle token bank。** 用类别和统计档位选取可训练的 80 个 soft tokens，连同问题送进冻结 4B；根据答案监督和文字 Teacher 蒸馏更新 bank。类别和统计文字不放进这条学生输入。独立验证类别、统计和完整报告后，再决定是否进入 EEG 阶段。
+3. **训练 EEG Projector。** 冻结 Encoder、4B 和训练好的 Oracle；EEG 经 Encoder＋Projector 产生对应的 80 个 tokens，同时做答案 SFT 和逐 token Oracle 对齐。推理只需要 EEG、问题和模型，不需要正确类别/统计值。
+
+当前 Oracle 没有 diversity loss，初始化锚定也不是 diversity loss。不同字段有固定 token 分组，但这不保证同组每个 token 都学到独立功能；先看验证集效果与 token 相似度，再单独做损失消融。当前公开 EEG 入口使用冻结的 10200 步 Oracle；新大批次 Teacher 生成和 Oracle 训练器的就绪范围见下表。
 
 ## 技术栈：训练和推理分开环境
 
-运行平台为 Linux、Python 3.10、NVIDIA GPU，底座使用原始 Qwen3-4B。
+运行平台为 Linux、NVIDIA GPU，底座使用原始 Qwen3-4B。训练环境用 Python 3.10，新版推理环境用 Python 3.11。
 
-| 环节 | 已验收的技术栈 | 用途 |
+| 环节 | 技术栈 | 用途 |
 |---|---|---|
 | 特征提取与可微训练 | PyTorch 2.5.1 / CUDA 12.4、Transformers 4.57.6、NumPy 1.26.4 | 冻结 Encoder/4B，按阶段更新 Oracle bank 或 Projector；保留经过 4B 输入 embedding 的梯度 |
-| 独立自回归生成与评测 | **vLLM 0.9.2**、PyTorch 2.7.0 / CUDA 12.6、Transformers 4.53.3、NumPy 2.2.6 | BF16、`prompt_embeds` soft-prefix 输入、批量生成；当前使用 V0，进程内设置 `VLLM_USE_V1=0` |
+| 新版独立生成与评测 | **vLLM 0.32.0+cu129 / V1**、PyTorch 2.13.0 / CUDA 12.9、Transformers 5.19.0、NumPy 2.3.5 | BF16、`prompt_embeds` soft-prefix 输入；显式选择 `ar_backend: "v1"`，移除旧 V0 标志；验收范围见升级说明 |
+| 历史生成与复现 | vLLM 0.9.2 / V0、PyTorch 2.7.0 / CUDA 12.6、Transformers 4.53.3、NumPy 2.2.6 | 保留旧环境与历史 Oracle 复现器；进程内设置 `VLLM_USE_V1=0` |
 | 数据处理 | MNE、SciPy、LMDB、h5py | 原始 EEG 预处理、Native200 读取、显式路径映射 |
 | 权重与评测结果 | safetensors、PyTorch checkpoint、JSON/JSONL | 推理权重、严格恢复所需优化器/RNG、原始生成和独立解析评分 |
 
-版本分别固定在 [requirements-train.txt](requirements-train.txt) 和
-[requirements-ar.txt](requirements-ar.txt)，安装命令见[运行指南](docs/AGENT_RUNBOOK.md#environment)。
-**不要把两份依赖混装在同一环境。** 这是现有 A100 验收组合，H20 仍需先短测。
+训练版本固定在 [requirements-train.txt](requirements-train.txt)，新版推理使用
+[requirements-ar-v1.txt](requirements-ar-v1.txt)，历史复现保留
+[requirements-ar.txt](requirements-ar.txt)。安装命令见[运行指南](docs/AGENT_RUNBOOK.md#environment)。
+**三个依赖文件对应不同环境，不要混装。** H20 仍需先短测；旧配置省略 `ar_backend` 时继续走 legacy，新配置模板已显式选择 V1。
 
 训练 forward/backward 使用 PyTorch＋Transformers；vLLM 用于独立生成与评测，不承担
 prefix 梯度训练。历史 Oracle 训练内部的 Student rollout 使用 Transformers `generate`，

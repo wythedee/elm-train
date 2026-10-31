@@ -1,0 +1,17 @@
+# Linux x86_64, Python 3.11. Keep separate from the training and legacy AR envs.
+# Use the PyTorch cu129 extra index; the default vLLM 0.32 PyPI wheel is CUDA 13.
+# Official matching cu129 release asset, SHA from the official GitHub release API.
+torch==2.13.0+cu129
+torchvision==0.28.0+cu129
+torchaudio==2.11.0+cu129
+# Text-only pipeline: avoid the default CUDA 13 audio/image codec build.
+torchcodec @ https://download.pytorch.org/whl/cpu/torchcodec-0.17.0%2Bcpu-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl#sha256=d859426bd2fed833ed0826c6d3fefa7a261178cd550420bd536e9f073e7eea56
+vllm @ https://github.com/vllm-project/vllm/releases/download/v0.32.0/vllm-0.32.0%2Bcu129-cp38-abi3-manylinux_2_28_x86_64.whl#sha256=9918be806fb2808c406547ff4f9f43870ac6ff28dc4b179291fcf532145bb50b
+transformers==5.19.0
+tokenizers==0.23.3
+numpy==2.3.5
+safetensors==0.8.0
+scipy==1.17.1
+h5py==3.16.0
+lmdb==2.1.1
+einops==0.8.2

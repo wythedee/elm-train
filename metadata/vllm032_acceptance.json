@@ -1,0 +1,186 @@
+{
+  "status": "passed_engineering_acceptance_with_recorded_numerical_output_differences",
+  "date": "2026-10-31",
+  "hardware": "A10040GiB",
+  "driver": "590.48.01",
+  "new_packages": {
+    "vllm": "0.32.0+cu129",
+    "torch": "2.13.0+cu129",
+    "transformers": "5.19.0",
+    "numpy": "2.3.5",
+    "safetensors": "0.8.0"
+  },
+  "legacy_vllm": "0.9.2",
+  "new_ar_backend": "v1",
+  "Val_EEG": 32,
+  "sources": 16,
+  "questions_per_source": 256,
+  "generated_answers_each_runtime": 512,
+  "additional_native_embedding_answers_each_runtime": 4,
+  "total_generated_answers": 1032,
+  "model": "original Qwen3-4B",
+  "frozen_Projector_step": 6600,
+  "frozen_Oracle_step": 10200,
+  "CPU_native_embedding_cases_each_runtime": 6,
+  "CPU_Oracle_input_prompts_bitwise_equal": 256,
+  "GPU_native_embedding_cases_each_runtime": 2,
+  "Oracle_prompt_embeddings_bitwise_equal": true,
+  "prediction_agreement": 0.984375,
+  "paired_output_changes": {
+    "projector": {
+      "changed": 6,
+      "old_wrong_new_correct": 3,
+      "old_correct_new_wrong": 1,
+      "both_wrong_different_prediction": 2,
+      "prompt_sha_equal": 256,
+      "queries": 256
+    },
+    "oracle_positive_control": {
+      "changed": 2,
+      "old_wrong_new_correct": 0,
+      "old_correct_new_wrong": 2,
+      "both_wrong_different_prediction": 0,
+      "prompt_sha_equal": 256,
+      "queries": 256
+    }
+  },
+  "task_comparison": {
+    "projector": {
+      "feature:alpha_relative_power": {
+        "n": 32,
+        "old_correct": 17,
+        "new_correct": 17,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "feature:hjorth_complexity": {
+        "n": 32,
+        "old_correct": 19,
+        "new_correct": 21,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "feature:hjorth_mobility": {
+        "n": 32,
+        "old_correct": 24,
+        "new_correct": 25,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "feature:line_length": {
+        "n": 32,
+        "old_correct": 23,
+        "new_correct": 23,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "feature:spectral_entropy": {
+        "n": 32,
+        "old_correct": 22,
+        "new_correct": 22,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "feature:theta_beta_ratio": {
+        "n": 32,
+        "old_correct": 20,
+        "new_correct": 19,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "label": {
+        "n": 32,
+        "old_correct": 12,
+        "new_correct": 12,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "report": {
+        "n": 32,
+        "old_correct": 1,
+        "new_correct": 1,
+        "old_format": 1.0,
+        "new_format": 1.0
+      }
+    },
+    "oracle_positive_control": {
+      "feature:alpha_relative_power": {
+        "n": 32,
+        "old_correct": 32,
+        "new_correct": 32,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "feature:hjorth_complexity": {
+        "n": 32,
+        "old_correct": 32,
+        "new_correct": 32,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "feature:hjorth_mobility": {
+        "n": 32,
+        "old_correct": 32,
+        "new_correct": 32,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "feature:line_length": {
+        "n": 32,
+        "old_correct": 32,
+        "new_correct": 32,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "feature:spectral_entropy": {
+        "n": 32,
+        "old_correct": 31,
+        "new_correct": 31,
+        "old_format": 0.96875,
+        "new_format": 0.96875
+      },
+      "feature:theta_beta_ratio": {
+        "n": 32,
+        "old_correct": 31,
+        "new_correct": 31,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "label": {
+        "n": 32,
+        "old_correct": 32,
+        "new_correct": 32,
+        "old_format": 1.0,
+        "new_format": 1.0
+      },
+      "report": {
+        "n": 32,
+        "old_correct": 27,
+        "new_correct": 25,
+        "old_format": 1.0,
+        "new_format": 1.0
+      }
+    }
+  },
+  "legacy_timing": {
+    "engine_startup_seconds": 29.153960625641048,
+    "all_generate_calls_seconds": 132.4958915039897,
+    "output_tokens": 7704,
+    "output_tokens_per_generate_second": 58.14519916467009,
+    "including_startup_hashing_and_scoring_seconds": 300.4787141587585
+  },
+  "v1_timing": {
+    "engine_startup_seconds": 53.690400309860706,
+    "all_generate_calls_seconds": 116.33530991710722,
+    "output_tokens": 7707,
+    "output_tokens_per_generate_second": 66.24815806560788,
+    "including_startup_hashing_and_scoring_seconds": 270.9064769092947
+  },
+  "process_exit_check_pending": false,
+  "additional_optimizer_steps": 0,
+  "Test": "N/A",
+  "H20_verified": false,
+  "full_Val_verified": false,
+  "no_per_person_or_raw_outputs": true,
+  "peak_memory_note": "Parent allocator metrics omit V1 EngineCore and are not comparable as total engine memory."
+}

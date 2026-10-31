@@ -16,9 +16,24 @@ sys.path.insert(0, str(REPO))
 from elm_pipeline import tasks
 from elm_pipeline import evaluation
 from elm_pipeline.io import sha, write
+from elm_pipeline import backends
 
 
 class TaskContract(unittest.TestCase):
+    def test_inference_profile_does_not_force_legacy_engine_into_v1(self):
+        cfg = {"ar_backend": "v1", "model": "/fixture/model"}
+        self.assertNotIn("VLLM_USE_V1", backends.configure_environment({"VLLM_USE_V1": "0"}, cfg))
+        self.assertEqual(backends.configure_environment({}, {})["VLLM_USE_V1"], "0")
+        self.assertEqual(backends.validate_version(cfg, "0.32.0+cu129"), "v1")
+        with self.assertRaises(ValueError):
+            backends.validate_version(cfg, "0.9.2")
+        with self.assertRaises(ValueError):
+            backends.profile({"ar_backend": "unknown"})
+        options = backends.engine_options(cfg, .35)
+        self.assertTrue(options["enable_prompt_embeds"])
+        self.assertFalse(options["enable_prefix_caching"])
+        self.assertEqual(options["max_model_len"], 4096)
+
     def test_source_syntax(self):
         for path in (REPO/"elm_pipeline").rglob("*.py"):
             ast.parse(path.read_text(), filename=str(path))

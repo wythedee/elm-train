@@ -21,25 +21,44 @@ those experiments are not automatically enabled by this interface.
 
 ## Environment
 
-Use Linux, Python 3.10 and an assigned full NVIDIA GPU. Do not run model acceptance
-or training on the developer Mac. Use two existing compatible environments or
-create environments on the training machine with the owner's authorization:
+Use Linux and assigned NVIDIA GPUs. Training uses Python 3.10; the new vLLM V1
+inference environment uses Python 3.11. Do not run model acceptance or training on
+the developer Mac. Keep the environments separate and create them only on an
+authorized training machine. Set private install/cache paths before downloading:
 
 ```bash
+mkdir -p /work/elm-private/install-tmp /work/elm-private/pip-cache
+export TMPDIR=/work/elm-private/install-tmp
+export PIP_CACHE_DIR=/work/elm-private/pip-cache
+export PIP_CONFIG_FILE=/dev/null
+
 python3.10 -m venv /work/envs/elm-train
 /work/envs/elm-train/bin/pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cu124
 /work/envs/elm-train/bin/pip install -r requirements-train.txt
 
-python3.10 -m venv /work/envs/elm-ar
-/work/envs/elm-ar/bin/pip install -r requirements-ar.txt
+python3.11 -m venv /work/envs/elm-ar-v1
+/work/envs/elm-ar-v1/bin/python -m pip install --no-cache-dir \
+  --index-url https://mirrors.aliyun.com/pypi/simple \
+  --extra-index-url https://download.pytorch.org/whl/cu129 \
+  -r requirements-ar-v1.txt
+/work/envs/elm-ar-v1/bin/python -m pip check
 ```
 
 Native200 loading includes `lmdb==2.1.1`; verify the pinned version against
 the accepted environment before a production run. No script installs packages,
 changes drivers, downloads a model implicitly or changes global CUDA libraries.
-The current inference path uses vLLM 0.9.2 V0, with process-local `VLLM_USE_V1=0`.
+Set `ar_backend: "v1"` and `ar_python` to this new interpreter. It uses
+vLLM 0.32.0+cu129 and clears the legacy V0 flag. The exact CUDA variant and CPU
+TorchCodec dependency are intentional: the default PyPI media/vLLM binaries can
+target CUDA 13. See [upgrade checks and limits](VLLM_UPGRADE.md) before admission.
+Do not repair an environment mismatch by changing system drivers.
 
-Keep the two requirements files in separate environments: their Torch,
+The archived `tools/reproduce.py` still requires the original Python 3.10,
+`requirements-ar.txt`, vLLM 0.9.2 V0 environment. Do not point that historical
+runner at the new V1 environment. Old staged configs without `ar_backend` also
+continue to use legacy V0; the version check refuses a mismatched interpreter.
+
+Keep the requirements files in separate environments: their Torch,
 Transformers and NumPy versions differ. Feature extraction and differentiable
 prefix/Projector training use PyTorch and Transformers. The frozen Decoder still
 needs an autograd path from its input embeddings to the trainable prefix; do not

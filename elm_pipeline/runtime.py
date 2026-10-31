@@ -10,6 +10,7 @@ import subprocess
 import sys
 import time
 from .io import read, sha, write
+from .backends import configure_environment
 
 REPO = Path(__file__).resolve().parents[1]
 GIB = 1024**3
@@ -113,6 +114,9 @@ def run_stage(cfg, config_path, stage, extra):
     if REPO == root or REPO in root.parents:
         raise ValueError("Keep private outputs outside the Git checkout")
     root.mkdir(parents=True, exist_ok=True)
+    disk_reserve = float(cfg.get("disk_reserve_gib", 20))*GIB
+    if disk_reserve < 20*GIB:
+        raise ValueError("Disk reserve must be at least 20 GiB")
     with (root/"stage.lock").open("a+") as role:
         fcntl.flock(role, fcntl.LOCK_EX | fcntl.LOCK_NB)
         if cache_owned(root):
@@ -152,20 +156,23 @@ def run_stage(cfg, config_path, stage, extra):
         if candidate is None:
             raise TimeoutError("No GPU admitted within original queue budget")
         try:
-            if shutil.disk_usage(root).free < 20*GIB:
-                raise OSError("20 GiB disk reserve")
+            if shutil.disk_usage(root).free < disk_reserve:
+                raise OSError("Configured disk reserve")
             env = os.environ.copy()
             env.pop("LD_LIBRARY_PATH", None); env.pop("CUDA_HOME", None)
-            env.update(CUDA_VISIBLE_DEVICES=str(candidate["index"]), VLLM_USE_V1="0",
+            env.update(CUDA_VISIBLE_DEVICES=str(candidate["index"]),
                        OMP_NUM_THREADS="4", MKL_NUM_THREADS="4", PYTHONDONTWRITEBYTECODE="1",
                        TOKENIZERS_PARALLELISM="false", PYTHONUNBUFFERED="1",
                        ELM_ALLOCATOR_GIB=str(candidate["min_free_GiB"]-10),
                        ELM_AR_UTIL=str(min(.35, (candidate["min_free_GiB"]-10)/candidate["total_GiB"])))
+            configure_environment(env, cfg)
             for key, directory in {"HF_HOME": "hf", "HF_HUB_CACHE": "hf/hub",
                 "TRANSFORMERS_CACHE": "hf/transformers", "TORCH_HOME": "torch",
                 "TORCH_EXTENSIONS_DIR": "extensions", "TRITON_CACHE_DIR": "triton",
                 "VLLM_CACHE_ROOT": "vllm", "NUMBA_CACHE_DIR": "numba",
-                "CUDA_CACHE_PATH": "cuda", "XDG_CACHE_HOME": "xdg"}.items():
+                "CUDA_CACHE_PATH": "cuda", "XDG_CACHE_HOME": "xdg",
+                "TORCHINDUCTOR_CACHE_DIR": "inductor", "CUPY_CACHE_DIR": "cupy",
+                "FLASHINFER_WORKSPACE_BASE": "flashinfer", "TVM_FFI_CACHE_DIR": "tvm-ffi"}.items():
                 path = root/"cache"/directory; path.mkdir(parents=True, exist_ok=True)
                 env[key] = str(path.resolve())
             tmp = Path(cfg.get("tmpdir", root/"tmp"))
@@ -202,8 +209,8 @@ def run_stage(cfg, config_path, stage, extra):
                     while process.poll() is None:
                         if time.time() > float(env["ELM_STAGE_DEADLINE"]):
                             raise TimeoutError("Stage original budget expired")
-                        if shutil.disk_usage(root).free < 20*GIB:
-                            raise OSError("20 GiB disk reserve")
+                        if shutil.disk_usage(root).free < disk_reserve:
+                            raise OSError("Configured disk reserve")
                         free = next(g["free_GiB"] for g in gpu_status() if g["index"] == candidate["index"])
                         low = low+1 if free < 8 else 0
                         if low >= 3:

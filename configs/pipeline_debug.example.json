@@ -28,5 +28,6 @@
   "stage_seconds": 2400,
   "total_seconds": 7200,
   "train_python": "/work/envs/elm-train/bin/python",
-  "ar_python": "/work/envs/elm-ar/bin/python"
+  "ar_backend": "v1",
+  "ar_python": "/work/envs/elm-ar-v1/bin/python"
 }

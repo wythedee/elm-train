@@ -9,6 +9,7 @@ import sys
 import traceback
 from .io import config, read, resolve_data_path, sha, write
 from . import tasks
+from .backends import profile
 
 
 def main():
@@ -20,6 +21,7 @@ def main():
     p.add_argument("--tag", default="validation")
     args = p.parse_args()
     cfg = config(args.config)
+    profile(cfg)
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", args.tag):
         p.error("Evaluation tag must contain only letters, digits, underscores or hyphens")
     if cfg.get("software_debug") and cfg.get("train_steps", 0) > 50:
