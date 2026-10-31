@@ -343,6 +343,25 @@ adapter coverage and H20 validation.
 
 ## Before any heavy H20 batch
 
+Use as many **assigned, admitted GPUs** as there are approved ready jobs. Do not
+default to serial execution or an arbitrary one/two/four-job cap. After one
+implementation smoke/speed check passes, schedule independent cases and seeds
+concurrently; refill released slots from the approved queue.
+
+The current trainer is single-GPU. Give each job a distinct physical GPU and a
+singleton `gpus` list. A multi-entry list is only an admission candidate list,
+not DDP or a global multi-job scheduler. Do not launch every job with the whole
+GPU pool and assume they will select different cards. Do not wrap this entry in
+`torchrun` without a separate verified distributed implementation. Use separate
+configs, output/checkpoint/log/cache directories and locks; model files may be
+shared read-only. Serialize stages that write the same job directory.
+
+The larger Oracle proposal is in `NEXT_DAY_PLAN.md`: approximately 100000
+candidate training questions, 30000 optimizer steps per case, common evaluations
+at 10000/20000/30000, initially three cases by two seeds. These are proposed
+targets, not measured throughput, a wall-clock authorization or an implemented
+batch launcher. The archived Oracle reproducer remains fixed at 3600 steps.
+
 1. Freeze the dataset version, canonical people, split and label mappings.
 2. Check the frozen Encoder's training provenance against that split.
 3. Run the assigned H20's short training/save/resume/AR test and measure speed.
