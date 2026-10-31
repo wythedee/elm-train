@@ -1,93 +1,43 @@
-# EEG Oracle 4B
+# ELM Train
 
-让冻结的 Qwen3-4B 读懂 EEG 对应的 soft tokens，再把 EEG 编码器的输出对齐到这些 tokens。
+把 EEG 编码器的输出转换成冻结 Qwen3-4B 能读取的 80 个 soft tokens，训练类别读取、统计读取和完整报告生成。
 
-本仓库复现第一阶段：**冻结原始 Qwen3-4B，只训练 80-token Oracle 编码表，训练 3600 步。** EEG 对齐代码保留作参考，不会自动启动；新消融实验也不会排队。
+当前新入口是 `python -m elm_pipeline.cli`：读取 Native200 → 两路冻结 Encoder → 特征分片 → Projector SFT＋Oracle 对齐 → 自回归生成 → 独立评分与报告。Encoder、4B 和 10200 步 Oracle 保持冻结，只更新约 2.54 亿参数的 Projector。
 
-**全量 EEG 复现工程尚在整理。** 当前入口不能从原始 EEG 自动完成全部预处理和 ELM 训练。各阶段已验证到哪里、调试子集与全量数据的区别，见 [流程验收状态](docs/PIPELINE_STATUS.md)。数据审计发现 MUMTAZ 与 NEMAR_MDD 同源且存在跨名称受试者切分重叠，历史结果不能直接视为严格全局受试者隔离的泛化结果。
+**已通过 A100 上的小规模软件验收：**16 个来源的特征重建、30 步训练与恢复到 35 步、真实生成及报告；ADFTD 也已从原始文件接通至报告。全量训练、全部原始数据入口和 H20 尚未验收，具体边界见状态表。
 
-## 训练流程
+## 从这里开始
 
-1. 从 EEG 提取类别和六项统计值，按 Train 阈值分成 low / mid / high。
-2. 类别选择 32 个可训练 tokens，六个统计档位分别选择 8 个，共 80 个。
-3. 把这些 tokens 和问题一起交给冻结 4B，生成回答。
-4. 用正确答案监督和明文 teacher 蒸馏更新编码表，4B 权重不变。
+- [给运行 Agent 的完整指南](docs/AGENT_RUNBOOK.md)：环境、资产、原始/预处理数据入口、路径映射、训练、恢复、生成、报告和失败处理。
+- [数据与流程验收状态](docs/PIPELINE_STATUS.md)：哪些已测、哪些仍有缺口。
+- [16 个来源的数据清单](docs/DATASETS.md)：条数、原始数据入口、标签与预处理版本差异、逐步校验。
+- [下一步实验及交付计划](docs/NEXT_DAY_PLAN.md)：现有结果、数据身份修正、全量覆盖和两项 Loss 的消融。
+- [配置模板](configs/pipeline_debug.example.json)：先修改路径和被分配的 GPU，再启动。
+- [历史 Oracle 单独复现](docs/ORACLE_ARCHIVE.md)：原 3600 步编码表实验，和当前 EEG 训练入口分开。
 
-训练只接纳 **4B 在不看参考答案的明文输入下能答对的 Train 题**。保留完整 Val，不删除明文答错的题。EEG 波形和正确答案都不作为学生模型的文字输入。
+## 先做静态检查
 
-## 先检查代码
-
-~~~bash
+```bash
 git clone git@github.com:wythedee/elm-train.git
 cd elm-train
+python3 -B tools/test_pipeline_static.py
+python3 -B tools/test_validate_data.py
 python3 -B tools/workbench.py check
 python3 -B tools/test_reproduce.py
-~~~
+```
 
-这两步只需 Python 标准库，不用数据、模型或 GPU。
+这些命令不训练、不加载模型、不使用 GPU。模型执行只在授权 Linux 服务器进行。
 
-**数据和权重不在 Git 中。** 没有另外提供的统计清单、题库、teacher 答案和初始化文件时，只能检查代码，不能完整复现训练。所需文件的相对路径和完整 SHA 见 metadata/asset_requirements.json。
+## 数据与模型
 
-## 准备环境和数据
+原始 EEG、缓存、权重和环境不在 Git 中。4B 使用官方原始 Qwen3-4B；项目模型资产单独提供，未发布的文件须等待清单，不能自动换成其他模型。数据按照配置中的根目录和路径映射读取，不要求复刻原服务器的目录。
 
-使用 Linux、NVIDIA GPU 和 Python 3.10。训练和自回归评测使用两个独立环境，版本来自原实验：
+校验优先使用条数、标签、通道/采样率/单位、窗口、受试者身份和坏样本记录，不强制所有原始文件 SHA 相同。历史清单为 Train313626 / Val61474 / Test72445，包含窗口限制及同源名称，不能直接解释为独立全量原始记录。
 
-~~~bash
-python3.10 -m venv /work/envs/elm-train
-/work/envs/elm-train/bin/pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cu124
-/work/envs/elm-train/bin/pip install -r requirements-train.txt
+**已知切分问题：**MUMTAZ 与 NEMAR_MDD 同源，CHB01 与 CHB21 也是同一人。历史独立切分有重叠，当前结果用于 debug；正式泛化必须同时检查数据切分和冻结 Encoder 的训练来源。
 
-python3.10 -m venv /work/envs/elm-ar
-/work/envs/elm-ar/bin/pip install -r requirements-ar.txt
-~~~
+## 当前训练设置
 
-已有相同版本的环境可直接使用。以上是给复现者的安装命令，不会由仓库脚本自动执行。完整版本见 metadata/train_environment.json 和 metadata/ar_environment.json。
+每条 EEG 输出 80×2560：32 个类别位置和六组各 8 个统计位置。两路特征保留 200→50 维压缩及每通道两个时间位置。监督为答案 CE＋归一化 token MSE＋0.1 cosine 对齐；正确类别和统计值仅用于监督，不作为 EEG 学生的文字输入。默认不加 KL、辅助头或 diversity loss。
 
-将另行提供的资产按清单中的相对路径放到一个目录，例如 /work/elm-assets。模型是**原始 Qwen3-4B**，不是 2507、3.5 或其他版本；逐文件 SHA 由资产清单核验。Oracle 阶段不需要拷贝原始 EEG 波形。
-
-## 复现 80-token 基线
-
-~~~bash
-# 核验资产，创建全新输出目录；不启动 GPU，不修改资产目录。
-# 先确保 /work/repro 已存在，并将 GPU 2,5 改成实际允许使用的物理卡号。
-python3 -B tools/reproduce.py prepare \
-  --assets /work/elm-assets \
-  --output /work/repro/o80 \
-  --train-env /work/envs/elm-train \
-  --ar-env /work/envs/elm-ar \
-  --gpus 2,5
-
-# CPU 检查：初始化、题目/答案隔离、数据、模型与源码身份。
-python3 -B tools/reproduce.py preflight --output /work/repro/o80
-
-# 只有这一条命令会启动 GPU；不应在同一目录启动第二份。
-python3 -B tools/reproduce.py run --output /work/repro/o80
-~~~
-
-入口生成独立工作区，沿用原训练、采样、损失和评测函数；仅适配路径、GPU 白名单，并跳过等待原机器已结束的 teacher 进程。不要直接执行 reference/ 中的历史脚本。
-
-流程为 CPU 检查 → 30 步训练短测 → 20 题生成短测 → 初始 Val → 6 × 600 步训练及阶段评测 → 收尾报告。短测权重丢弃，正式训练使用固定初始化和新优化器；1800、3600 步保留完整 Val 对照。
-
-每次只占白名单中的一张卡，训练入场需实际空闲显存 ≥26 GiB，生成需 ≥24 GiB；不要求空卡。总预算 12 小时、每阶段 4 小时，保留 8 GiB 物理显存和 12 GiB 磁盘余量。中断后在原目录执行同一条 run 命令，沿用原时钟和已提交 checkpoint，不重新计算预算。建议使用较短输出路径，避免推理引擎的 Unix socket 路径过长。
-
-## 查看结果
-
-输出目录下的 experiments/mainline_vrl/runs/oracle4b80_simple_20261024_s1014/ 包含：
-
-- final_report.md：可读报告。
-- results_summary.json：训练及各题型指标。
-- label32_stat8/curriculum/oracle/：best、last、逐轮 checkpoint 和训练记录。
-- label32_stat8/curriculum/evaluation/：逐题生成和阶段汇总。
-- audit/final_verification.json：可用产物及进程退出检查。
-
-报告分别列格式、逐题正确性、完整报告全对率，以及“明文原本正确的同题，Oracle 仍正确”的比例和支持数。这个实验只做 Val 诊断，没有新增 Test；EEG 对齐不会因门槛通过而自动启动。
-
-## 数据与固定设置
-
-当前题库包含 4691 条正确 Train 题、1744 条完整 Val 题。来源共 16 个 EEG 数据集：运动想象、情绪、注意力、疾病、临床 EEG 和睡眠；清单见 metadata/data_sources.json。真实数据 30 类，Oracle 合成组合 31 类，额外的 schizophrenia 类仅为合成。
-
-题目是统计档位读取、两记录比较、选较高、选较低，外加类别/统计读取和完整报告。同档表示离散档位相同，不代表连续值相等。27B 仅生成题面，不参与最终答题。沿用历史的逐来源受试者切分和未见题面 Val；已知跨来源同源受试者问题见上面的流程验收状态，不能声称全局受试者隔离。
-
-固定设置：seed 1014，batch 8 / micro 1，LR 0.001，weight decay 0.0001；正确 teacher 答案 CE + 0.5 全词表 forward KL + 0.0001 初始化约束。学生轨迹概率为 0 / 0.25 / 0.75 / 0.75 / 0.75 / 0.75，错误学生回答不作 CE 标签。20% 基础读取/报告、80% 四种简单操作，25% 更早训练池回放。按固定 ValTF240 CE 选 best，并单独报告 last1800 / last3600。
-
-**验证范围：**源码快照、规则、路径迁移和使用现有私有资产的 CPU 预检已验证；本次发布没有重新运行 GPU 训练，也未验证 H20 端到端复现。硬件和推理运行时可能造成数值差异。
+报告分开列类别、六项统计、完整报告七项全对、格式有效率和支持数。旧报告训练的 6600 步 Val 全对为 8/128，格式为 100%；这两者不能混用。详情与限制见下一步计划。

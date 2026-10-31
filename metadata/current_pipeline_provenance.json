@@ -1,0 +1,61 @@
+{
+  "scope": "Current staged EEG pipeline; archived provenance.json describes the old Oracle-only release",
+  "entry": "python -m elm_pipeline.cli",
+  "model": "original Qwen3-4B frozen",
+  "Encoder": "frozen class Top3/16-expert CBraMod and frozen statistics CBraMod",
+  "Oracle": "frozen step10200",
+  "Projector": {
+    "parameters": 253616432,
+    "tokens": 80,
+    "embedding_width": 2560,
+    "output_scale": 0.08
+  },
+  "training": "answer CE + normalized token MSE + 0.1 cosine; no KL/auxiliary head/diversity term",
+  "source_sha256": {
+    "elm_pipeline/__init__.py": "6944fdc220e3f217f3e04ab3a11c379698bb6a1cb475b66fc5ce76afe3406718",
+    "elm_pipeline/adapters/__init__.py": "5d20393d1438eee18f11693e9f4282817d8da56873ef7105a4c1d321d827a85b",
+    "elm_pipeline/adapters/event_native200.py": "7e3c15136d16d89663c9b671104819c297a1b8ec7656fc79800f280f7bfe7e8d",
+    "elm_pipeline/adapters/scalp_native200.py": "716a56987eec777de9871dd62a223ab7334e2c44fc7835b7a3bfd38225906f5e",
+    "elm_pipeline/channels.py": "af1ddab486655d8b524fafe253b1cf1aa5a6d73c439366d36b93892ff7441d92",
+    "elm_pipeline/cli.py": "07bee3646550e3ae2f8e02753227ddc371936cd861051b39d9fd3a7809d94e29",
+    "elm_pipeline/data.py": "27e34e7c004906af44cb88035a1717a68686edd83ef012ccb27b255a02dfbdd9",
+    "elm_pipeline/encoders.py": "0ff2f7e35ea6ce7fb62712269a2d9b3bc4444c4dc118a6aebb9b1f3fc1a691aa",
+    "elm_pipeline/evaluation.py": "2080104c39f6428e90e5578671b4d69f5cdb23bda12d134f033ab07f65f988fd",
+    "elm_pipeline/features.py": "e6bf86fc126929fe4e1487377d71cf3e4ccdb0ce82720ad8d90b707a1d8caa88",
+    "elm_pipeline/io.py": "891e97ec211865d50867827d67ac11961cca3812ae044de89f3b0633bccca1f6",
+    "elm_pipeline/projector.py": "bc4ddf7c37621027af36db14f26fd39e384d2bb39982b96efb39c3ab6b3751ee",
+    "elm_pipeline/runtime.py": "70ab1a50a771980ddd40bfb0e5518450eb3f3bc8cf09c0f0a0c1a355c17622a9",
+    "elm_pipeline/signals.py": "46957c8f5506899b0055223e7e288a68b8892a27486d8931c4ff530afad7e84c",
+    "elm_pipeline/tasks.py": "2fb3d5c2ac003bc4c0a958d40755a2ec4748742a78909b207389ab6d00ce4194",
+    "elm_pipeline/training.py": "36e137378b2766ce9b5a7ae2c4fde897ce5e1a57fa9d93b7856537c8b6570554",
+    "elm_pipeline/vendor/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "elm_pipeline/vendor/cbramod/__init__.py": "f21c65d4385400f231d1c959205842f640bee38e9f010daa32a7fa734df25edf",
+    "elm_pipeline/vendor/cbramod/cbramod.py": "e8193e557ee3ca3f422c17ae661fb8e4df671d9228c413ea092d879af1b8296b",
+    "elm_pipeline/vendor/cbramod/criss_cross_transformer.py": "90e90b8c98ca7eb543c44e32afc29674d3f71cb090692ad9f82db3a43edf334c"
+  },
+  "server_acceptance": {
+    "date": "2026-10-31",
+    "hardware": "A100 40GiB",
+    "bounded_feature_records": 64,
+    "Train_EEG": 32,
+    "Val_EEG": 32,
+    "train_steps": 35,
+    "resume_from_step": 30,
+    "independent_step_sampler_optimizer_RNG_and_raw_rescore_audit": "passed",
+    "raw_accepted_datasets": [
+      "ADFTD"
+    ],
+    "raw_ADFTD_subjects": 9,
+    "raw_ADFTD_windows": 18,
+    "fresh35_AR_queries": 512,
+    "raw_linkage_AR_queries": 96,
+    "safe6600_inference_AR_queries": 608,
+    "safe6600_inference_optimizer_steps": 0,
+    "process_exit_check_pending": false,
+    "full_raw16_verified": false,
+    "full_corpus_trained": false,
+    "H20_verified": false
+  },
+  "private_assets_not_published": true,
+  "no_EEG_records_or_per_person_outputs_in_this_metadata": true
+}

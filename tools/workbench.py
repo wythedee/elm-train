@@ -14,12 +14,17 @@ def check():
  for row in manifest["source_files"]:
   p=ROOT/row["snapshot_path"];assert p.is_file() and digest(p)==row["snapshot_sha256"],str(p)
   if p.suffix==".py":ast.parse(p.read_text())
+ current=ROOT/"metadata/current_pipeline_provenance.json"
+ if current.exists():
+  for rel,want in read(current)["source_sha256"].items():
+   p=(ROOT/rel).resolve();assert ROOT in p.parents and digest(p)==want,"Current pipeline source mismatch: "+rel
  badsuffix={".pt",".pth",".ckpt",".safetensors",".h5",".hdf5",".lmdb",".npy",".npz",".jsonl"}
  secret=re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{24,}|hf_[A-Za-z0-9]{30,}|AKIA[0-9A-Z]{16}")
  paths=[p for p in ROOT.rglob("*") if p.is_file() and ".git" not in p.relative_to(ROOT).parts and "__pycache__" not in p.relative_to(ROOT).parts]
  for p in paths:
   assert p.suffix not in badsuffix and p.stat().st_size<1024*1024,str(p)
   assert not secret.search(p.read_text()),"Potential credential in "+str(p)
+  if p.suffix==".py":compile(p.read_text(),str(p),"exec",dont_inherit=True)
  candidates=list((ROOT/"reference").rglob("simple_task_validator_v1.py"));assert len(candidates)==1
  sp=importlib.util.spec_from_file_location("released_ordinal_rules",candidates[0]);v=importlib.util.module_from_spec(sp);sp.loader.exec_module(v)
  tests=0;ranks={"low":0,"mid":1,"high":2}

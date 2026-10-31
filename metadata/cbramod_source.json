@@ -1,0 +1,16 @@
+{
+  "models/cbramod.py": {
+    "original_sha256": "caa7c5a0e4acd488a6f625b56f7b54dc4e7190d6b68ef5b76dff2cef86874a14",
+    "release_sha256": "e8193e557ee3ca3f422c17ae661fb8e4df671d9228c413ea092d879af1b8296b"
+  },
+  "models/criss_cross_transformer.py": {
+    "original_sha256": "90e90b8c98ca7eb543c44e32afc29674d3f71cb090692ad9f82db3a43edf334c",
+    "release_sha256": "90e90b8c98ca7eb543c44e32afc29674d3f71cb090692ad9f82db3a43edf334c"
+  },
+  "LICENSE": {
+    "original_sha256": "eb839b706e4d7219842e96d7dc33285844abc794292602deb3498be7b699537c",
+    "release_sha256": "eb839b706e4d7219842e96d7dc33285844abc794292602deb3498be7b699537c"
+  },
+  "source": "https://github.com/wjq-learning/CBraMod",
+  "license": "MIT; bundled LICENSE retained. Import changed to package-relative; architecture unchanged."
+}

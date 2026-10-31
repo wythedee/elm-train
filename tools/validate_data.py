@@ -26,6 +26,13 @@ def canonical_subject(dataset, subject):
         if match is None:
             raise ValueError("Unknown Mumtaz/NEMAR subject notation: " + repr(subject))
         return "mumtaz_origin:" + match[1] + "_s" + str(int(match[2]))
+    if dataset == "CHB_MIT":
+        match = re.fullmatch(r"chb0*(\d+)", subject.lower())
+        if match is None:
+            raise ValueError("Unknown CHB case notation: " + repr(subject))
+        # PhysioNet documents chb21 as a later recording of the chb01 person.
+        number = int(match[1])
+        return "chb_person:" + str(1 if number == 21 else number)
     return dataset + ":" + subject
 
 
@@ -161,7 +168,7 @@ def audit(manifest_root, datasets, max_bad_fraction=0.0):
         warnings.append({
             "kind": "additional_identity_mapping_required",
             "action": "Check source patient/case aliases, including across TUH corpus versions. "
-                      "This tool only merges the documented Mumtaz/NEMAR aliases; "
+                      "This tool merges documented Mumtaz/NEMAR and CHB01/21 aliases; "
                       "a pass does not certify all corpora globally independent."})
     return {
         "status": "passed_manifest_checks" if not critical_count else "failed",

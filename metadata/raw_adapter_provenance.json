@@ -1,0 +1,12 @@
+{
+  "prepare_new_scalp_native200.py": {
+    "original_sha256": "669fa7ccd9ca8a28096425e4705bef667b22306c3677567b75d1a8afe9d1c372",
+    "released_sha256": "716a56987eec777de9871dd62a223ab7334e2c44fc7835b7a3bfd38225906f5e",
+    "changes": "Required JSON raw-root mapping and fresh output paths; no overwrite CLI; core preprocessing functions unchanged. Window IDs use actual offsets and relative-file digest; original index retained as metadata, avoiding ID collisions when caps differ."
+  },
+  "prepare_braincot_event_native200.py": {
+    "original_sha256": "3a60c3dd1c432ca4a4b1be41cf6b0d40967f78f99ff2c43a8a69eb55a51c4919",
+    "released_sha256": "7e3c15136d16d89663c9b671104819c297a1b8ec7656fc79800f280f7bfe7e8d",
+    "changes": "Required JSON raw-root mapping and fresh output paths; no overwrite CLI; core preprocessing functions unchanged."
+  }
+}

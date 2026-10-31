@@ -6,28 +6,49 @@ that a new installation can reproduce raw EEG preprocessing.
 
 ## Current release boundary
 
-The runnable public entry point, `tools/reproduce.py`, reproduces the archived
-80-token Oracle experiment using separately supplied, versioned assets. It does
-not currently implement the entire raw-data-to-ELM pipeline. The `reference/`
-directory is an archive, not a collection of standalone training commands.
+The new entry point is `python -m elm_pipeline.cli`. Its bounded server test has
+completed Native200 loading, both frozen Encoders, feature reconstruction, a fresh
+30-step Projector run, an independent-process resume to step 35, real 4B
+autoregressive generation and CPU report rescoring. A second test started from
+ADFTD source files and completed preprocessing → features → generation → report.
+Both used authorized A100 servers. These are software acceptance tests.
 
-The requested full-data release is being assembled. Do not schedule a large H20
-run from this repository until the raw preprocessing adapters, feature extraction,
-EEG Projector training, evaluation, and their server acceptance checks are present.
-Do not substitute the archived Oracle command for full EEG pretraining.
+`tools/reproduce.py` remains the archived 80-token Oracle-only entry point, and
+`reference/` remains an archive. The new interface uses the frozen 10200-step
+Oracle; it does not yet implement a new full-corpus teacher/Oracle training stage
+or training all Encoders from scratch. Do not substitute the archived command for
+full EEG pretraining, or launch a heavy H20 batch from these bounded results.
 
 | Stage | Evidence available | Remaining acceptance work |
 |---|---|---|
-| Raw data → Native200 | Historical preprocessing and manifests exist | Portable per-dataset adapters and bounded tests from raw input |
-| Native200 → frozen Encoder features | Historical feature banks and Encoder checkpoints exist | Configurable checkpoint/input paths and feature reconstruction checks |
-| Facts → Oracle tokens → frozen 4B | Archived runnable entry and private-asset CPU checks | New-machine GPU reproduction, including H20 |
-| EEG features → Projector → frozen 4B | Private server debug runs have trained, saved, resumed, generated and scored | Publish the current implementation and repeat a bounded test through the public entry |
-| Single class/statistic answers | Validation results are available | Full-data evaluation under a corrected cohort split |
-| Complete report generation | Structured output is valid; previous checkpoint has content errors | Validate the run with explicit report supervision; report format and factual correctness separately |
+| Raw data → Native200 | Nine adapters included; ADFTD: 9 people, 18 windows, 6/6/6 Train/Val/Test, zero errors | Eight included routes still need raw-input tests; seven other raw routes are not all packaged |
+| Native200 → frozen Encoder features | All 16 logical sources, 2 Train + 2 Val records each; 64 fresh records match the old cache within the declared BF16 tolerance, masks/bins exact | Full-corpus extraction, corrected subject identity, each raw-version equivalence |
+| Facts → Oracle tokens → frozen 4B | Frozen Oracle positive control generated alongside the Projector | New teacher/Oracle training through this interface; H20 acceptance |
+| EEG features → Projector → frozen 4B | New entry trained 0→30 and strictly restored 30→35; all parameters/80 slots received gradients; 512 AR queries and reports completed | Full-data training, scientific ablations and H20 |
+| Source EEG → report | ADFTD source → Native200 → both Encoders → existing step-35 Projector/Oracle → 96 AR queries, no extra optimization | Other raw adapters and meaningful trained-model evaluation |
+| Exported trained weights → report | Safe step-6600 Projector independently loaded on NORVE; 512 queries on the 32-record subset plus 96 on the raw ADFTD subset, no extra optimization; dependency/coverage/raw-summary checks passed | Full evaluation with matched inputs and corrected data protocol |
+| Complete report generation | Closed step-6600 diagnostic: class 66/128, six statistic reads 534/768, report 8/128, format 100% | Accuracy improvement under a valid full-data protocol |
 
 All model training and optimizer-based acceptance tests run on authorized Linux
 servers. A developer laptop may run syntax, configuration, and synthetic manifest
 tests only.
+
+The 35-step model is freshly initialized and is not the trained step-6600 model.
+Its poor prediction accuracy is not evidence that the historical model regressed.
+The short test establishes data flow, gradients, strict restore, generation and
+report integrity. It does not establish useful EEG decoding accuracy.
+
+The standalone inference test also passed with the trained step-6600 safe export,
+separately from the fresh short-training model. Both tests retained the original
+closed run and checkpoint. The new 32- and 6-record selections are engineering
+subsets, not replacements for the historical 128-record evaluation denominator.
+
+The feature reconstruction check compared 64 selected records by ID: continuous
+statistics used `rtol=1e-4, atol=1e-6`, masks and bins matched exactly, all feature
+cosines exceeded 0.999. Maximum relative RMS differences were 0.01434 for the
+class bank and 0.00553 for the statistics bank. The software test used 32 Train
+and 32 Val EEG, visited every selected Train record, and peaked at 13.24 GiB of
+Torch allocation. Those numbers do not estimate full-data speed or H20 memory.
 
 ## Three different data sizes
 
@@ -70,9 +91,9 @@ generalization result. Full-data evaluation requires an explicit cohort policy:
 - Check other known patient/case aliases and overlaps between TUH corpus versions
   before claiming global isolation. Unknown identity mappings remain a limitation.
 
-`tools/validate_data.py` checks the documented Mumtaz/NEMAR alias and rejects
-cross-split participants. It does not silently repair existing splits or claim
-that every other source has been globally deduplicated.
+`tools/validate_data.py` checks the documented Mumtaz/NEMAR and CHB01/CHB21
+aliases and rejects cross-split participants. It does not silently repair
+existing splits or claim that every other source has been globally deduplicated.
 
 ## Agent check before using supplied manifests
 
@@ -112,13 +133,14 @@ The validator exits nonzero on a semantic/identity violation or duplicate record
 ID, regardless of the permitted malformed-JSON fraction. Its JSON contains subject
 identifiers; keep that output with private data rather than committing it.
 
-The current validator was exercised on all 447,545 rows of the historical
+The earlier Mumtaz/NEMAR validator was exercised on all 447,545 rows of the historical
 16-source manifests on the server: zero schema-invalid rows, and an intentional
 nonzero audit result for 27 canonical people spanning multiple splits across
 Mumtaz/NEMAR. That count includes Train/Val/Test intersections in the larger
 manifests; it is different from the 12 Train/Val overlaps in the debug subset.
-Synthetic tests also cover alias normalization, duplicate IDs, and the lazy-H5
-variant. This verifies the checker, not the independence of the original data.
+Synthetic tests also cover both alias normalizations, duplicate IDs, and the
+lazy-H5 variant. This verifies the checker, not the independence of the original
+data. A new full audit must be retained when changing the identity policy.
 
 ## Required full-pipeline acceptance evidence
 
@@ -138,5 +160,13 @@ Before a heavy batch, the released commands must produce evidence for:
    A replacement sampler running many steps is not proof that all Train records
    were visited.
 
-These are acceptance requirements, not claims that the new public pipeline has
-already passed them.
+Items 2–5 have passed the bounded A100 software test described above. Item 1 has
+passed for ADFTD only; item 6 is implemented as a full-pass sampler but has not
+been exercised over the entire corpus. Failure handling also refuses a report
+with missing/duplicate queries, changed inference dependencies, or a summary
+that differs from rescoring the raw strings. Do not expand these statements to
+unverified adapters, complete scientific evaluation, or H20 hardware.
+
+`metadata/current_pipeline_provenance.json` identifies the current staged module
+and its bounded acceptance scope. The older `metadata/provenance.json` and
+`source_manifest.json` identify the archived Oracle source, not this new pipeline.

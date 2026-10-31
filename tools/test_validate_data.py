@@ -16,6 +16,8 @@ class IdentityTests(unittest.TestCase):
                          canonical_subject("NEMAR_MDD", "sub-MDDS3"))
         with self.assertRaises(ValueError):
             canonical_subject("NEMAR_MDD", "unknown_subject")
+        self.assertEqual(canonical_subject("CHB_MIT", "chb01"),
+                         canonical_subject("CHB_MIT", "chb21"))
 
     def fixture(self, root, leak=False, duplicate=False):
         for dataset in ("MUMTAZ_MDD", "NEMAR_MDD"):
