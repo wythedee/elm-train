@@ -15,6 +15,38 @@
 - [配置模板](configs/pipeline_debug.example.json)：先修改路径和被分配的 GPU，再启动。
 - [历史 Oracle 单独复现](docs/ORACLE_ARCHIVE.md)：原 3600 步编码表实验，和当前 EEG 训练入口分开。
 
+## 技术栈：训练和推理分开环境
+
+运行平台为 Linux、Python 3.10、NVIDIA GPU，底座使用原始 Qwen3-4B。
+
+| 环节 | 已验收的技术栈 | 用途 |
+|---|---|---|
+| 特征提取与可微训练 | PyTorch 2.5.1 / CUDA 12.4、Transformers 4.57.6、NumPy 1.26.4 | 冻结 Encoder/4B，按阶段更新 Oracle bank 或 Projector；保留经过 4B 输入 embedding 的梯度 |
+| 独立自回归生成与评测 | **vLLM 0.9.2**、PyTorch 2.7.0 / CUDA 12.6、Transformers 4.53.3、NumPy 2.2.6 | BF16、`prompt_embeds` soft-prefix 输入、批量生成；当前使用 V0，进程内设置 `VLLM_USE_V1=0` |
+| 数据处理 | MNE、SciPy、LMDB、h5py | 原始 EEG 预处理、Native200 读取、显式路径映射 |
+| 权重与评测结果 | safetensors、PyTorch checkpoint、JSON/JSONL | 推理权重、严格恢复所需优化器/RNG、原始生成和独立解析评分 |
+
+版本分别固定在 [requirements-train.txt](requirements-train.txt) 和
+[requirements-ar.txt](requirements-ar.txt)，安装命令见[运行指南](docs/AGENT_RUNBOOK.md#environment)。
+**不要把两份依赖混装在同一环境。** 这是现有 A100 验收组合，H20 仍需先短测。
+
+训练 forward/backward 使用 PyTorch＋Transformers；vLLM 用于独立生成与评测，不承担
+prefix 梯度训练。历史 Oracle 训练内部的 Student rollout 使用 Transformers `generate`，
+也不要与独立 vLLM 评测混淆。
+
+## 代码入口与就绪范围
+
+| 代码 | 当前状态 |
+|---|---|
+| `elm_pipeline/cli.py` | 已实现 `check / features / train / evaluate / report` 分阶段入口 |
+| `elm_pipeline/encoders.py`、`features.py` | 两路冻结 Encoder 与特征重建，已做有限样本服务器核对 |
+| `elm_pipeline/training.py`、`projector.py` | EEG Projector 的 SFT＋token 对齐、保存/严格恢复，服务器 30→35 步短测通过 |
+| `elm_pipeline/evaluation.py` | 实际 vLLM 生成、完整题目覆盖检查、独立评分和报告，已跑通 |
+| `elm_pipeline/adapters/` | 已提供九个原始数据入口；目前仅 ADFTD 完成新 raw 输入验收，逐项状态见数据清单 |
+| `tools/reproduce.py` | 已有历史 3600 步 Oracle 的隔离复现入口，需要另外提供其数据和模型资产 |
+| `reference/` | 历史源码快照，不能直接当作新批次运行命令 |
+| 新 10 万候选题／3 万步 Oracle 批次 | 目前为提案，新题库构建、变体训练和批量 launcher 尚未接齐；不是 clone 后就能启动的六组实验 |
+
 ## 给运行 Agent：尽量多卡并行
 
 **资源允许时，把已经批准的实验组和随机种子分配到尽可能多的 GPU 同时运行，不要默认逐组串行。** 并发数取“已批准且就绪的任务数”和“实际获准使用、显存达标的 GPU 数”中的较小值，不默认限制成 1、2 或 4 卡。

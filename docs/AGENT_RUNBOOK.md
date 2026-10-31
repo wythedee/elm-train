@@ -39,6 +39,16 @@ the accepted environment before a production run. No script installs packages,
 changes drivers, downloads a model implicitly or changes global CUDA libraries.
 The current inference path uses vLLM 0.9.2 V0, with process-local `VLLM_USE_V1=0`.
 
+Keep the two requirements files in separate environments: their Torch,
+Transformers and NumPy versions differ. Feature extraction and differentiable
+prefix/Projector training use PyTorch and Transformers. The frozen Decoder still
+needs an autograd path from its input embeddings to the trainable prefix; do not
+replace that training forward with a vLLM inference call. Standalone AR generation
+and evaluation use vLLM with `prompt_embeds`. Historical Oracle Student rollouts
+inside the training process use Transformers `generate`; this is distinct from
+the independent vLLM evaluator. A future large-batch Teacher data generator is
+not yet supplied by the current public entry.
+
 Run static tests without a model or GPU:
 
 ```bash
