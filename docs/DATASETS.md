@@ -4,6 +4,39 @@ This table describes the historical Native200 manifests, not a claim that all ra
 
 Every source passed a bounded Native200 → two-Encoder reconstruction check on two Train and two Val records. Only ADFTD has also passed a fresh raw-input acceptance test in this release.
 
+## Preprocessing code and source access
+
+The portable entry points are `elm_pipeline/adapters/scalp_native200.py` and
+`elm_pipeline/adapters/event_native200.py`; their accepted sources and actual
+verification status are in the table below. See the [runbook](AGENT_RUNBOOK.md)
+for the input JSON and commands. These adapters do not currently cover every
+raw source. Each source needs its own version, labels, units, channel map and
+participant split; a dataset name is not enough to recreate the historical data.
+
+Additional first-party historical preprocessing scripts are kept under
+`tools/legacy_preprocessing/`. They require explicit input and output roots and
+refuse to delete existing results. They are source-level references, **not yet
+validated end-to-end in the released environment**. In particular:
+
+| Script | Input → output | Limitations |
+|---|---|---|
+| `prepare_0722_mumtaz_native200.py` | Mumtaz raw recordings → Native200 LMDB and manifests | Original split policy; audit Mumtaz/NEMAR participant aliases before use. |
+| `prepare_0807_hebin_lazy_native200.py` | Already-standardized 250 Hz HeBin H5 → lazy Native200 manifests | Not a raw-to-H5 converter; requires the matching H5 and base manifests. |
+| `prepare_0722_merged_200hz_manifests.py` | Existing legacy 250 Hz H5 manifests and native manifests → 200 Hz LMDB/manifests | Needs both historical input sets; dataset list is historical and differs from the current 16. |
+| `prepare_device_native_lmdb_200.py` | Original DEAP, THU-EP or Tsinghua SSVEP input → Native200 LMDB | Not an implementation of all 16 sources; downstream manifest creation is separate. |
+
+Run `python tools/legacy_preprocessing/SCRIPT.py --help` for each script's
+required paths. Always use a new output directory and keep the input data unchanged.
+The earlier ECHO raw readers are in the owner's [ECHO repository](https://github.com/wythedee/ECHO);
+their licenses, source versions and integration with this release remain to be
+checked. Do not describe them as a validated 16-source raw-to-training pipeline.
+
+For example, [SEED's data license](https://bcmi.sjtu.edu.cn/home/seed/resource/license/license.pdf)
+restricts redistribution. Each user must obtain access from the source; a
+processed copy must not be assumed publicly redistributable. Apply the source
+dataset's own access and license terms to each dataset, rather than treating all
+EEG data as covered by this code repository's license.
+
 |Logical name|Reference windows Train / Val / Test|Raw entry in this release|Version/label issue to check|
 |---|---:|---|---|
 |ADFTD|2560 / 480 / 480|`scalp_native200` — raw test passed on a bounded subset|EEGLAB eyes-closed derivatives plus participants.tsv, groups A/F/C; actual raw9-person acceptance passed.|

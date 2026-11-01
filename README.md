@@ -12,6 +12,7 @@
 - [给运行 Agent 的完整指南](docs/AGENT_RUNBOOK.md)：环境、资产、原始/预处理数据入口、路径映射、训练、恢复、生成、报告和失败处理。
 - [数据与流程验收状态](docs/PIPELINE_STATUS.md)：哪些已测、哪些仍有缺口。
 - [16 个来源的数据清单](docs/DATASETS.md)：条数、原始数据入口、标签与预处理版本差异、逐步校验。
+- [预处理代码及其覆盖范围](docs/DATASETS.md#preprocessing-code-and-source-access)：已发布的原始入口、历史转换脚本、未验收的环节及各来源的访问要求。
 - [下一步实验及交付计划](docs/NEXT_DAY_PLAN.md)：现有结果、数据身份修正、全量覆盖和两项 Loss 的消融。
 - [配置模板](configs/pipeline_debug.example.json)：先修改路径和被分配的 GPU，再启动。
 - [历史 Oracle 单独复现](docs/ORACLE_ARCHIVE.md)：原 3600 步编码表实验，和当前 EEG 训练入口分开。
