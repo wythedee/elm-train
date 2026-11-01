@@ -1,117 +1,124 @@
 # ELM Train
 
-把 EEG 编码器的输出转换成冻结 Qwen3-4B 能读取的 80 个 soft tokens，训练类别读取、统计读取和完整报告生成。
+EEG → 冻结的两路 Encoder → 可训练 Projector → 80 个 soft tokens → 冻结的原始 Qwen3-4B → 类别、统计值和报告。
 
-当前新入口是 `python -m elm_pipeline.cli`：读取 Native200 → 两路冻结 Encoder → 特征分片 → Projector SFT＋Oracle 对齐 → 自回归生成 → 独立评分与报告。Encoder、4B 和 10200 步 Oracle 保持冻结，只更新约 2.54 亿参数的 Projector。
+**运行 Agent 从本页顺序执行。** 先准备环境、数据和权重，再运行收到的实验配置。工作目录和 GPU 使用对方服务器实际分配的值，无需复刻我们的绝对路径。
 
-**已通过 A100 上的小规模软件验收：**16 个来源的特征重建、30 步训练与恢复到 35 步、真实生成及报告；ADFTD 也已从原始文件接通至报告。全量训练、全部原始数据入口和 H20 尚未验收，具体边界见状态表。
+当前已实现 EEG Projector 训练、恢复、vLLM 生成和报告；新的大批次 Oracle 数据生成/训练入口仍在准备。下面的35步启动小跑用于检查新服务器入口。
 
-## 从这里开始
+## 1. 一次准备环境、数据和权重
 
-- **[师姐端 / H20 交接单](docs/H20_HANDOFF.md)**：第一项任务、执行顺序、停止条件、交回的报告；运行Agent先读这一份。
-- [给运行 Agent 的完整指南](docs/AGENT_RUNBOOK.md)：环境、资产、原始/预处理数据入口、路径映射、训练、恢复、生成、报告和失败处理。
-- [数据与流程验收状态](docs/PIPELINE_STATUS.md)：哪些已测、哪些仍有缺口。
-- [16 个来源的数据清单](docs/DATASETS.md)：条数、原始数据入口、标签与预处理版本差异、逐步校验。
-- [完整预处理数据下载](docs/TRAINING_DATA.md)：ModelScope 地址、体积、下载命令、路径配置和条数校验；上传进行中，等完整确认后使用。
-- [预处理代码及其覆盖范围](docs/DATASETS.md#preprocessing-code-and-source-access)：已发布的原始入口、历史转换脚本、未验收的环节及各来源的访问要求。
-- [下一步实验及交付计划](docs/NEXT_DAY_PLAN.md)：现有结果、数据身份修正、全量覆盖和两项 Loss 的消融。
-- [配置模板](configs/pipeline_debug.example.json)：先修改路径和被分配的 GPU，再启动。
-- [历史 Oracle 单独复现](docs/ORACLE_ARCHIVE.md)：原 3600 步编码表实验，和当前 EEG 训练入口分开。
-- [新版 vLLM 安装与验收](docs/VLLM_UPGRADE.md)：0.32 的独立环境、镜像、CUDA 配套及新旧输出对照。
-- [模型权重与使用方式](docs/CHECKPOINTS.md)：Encoder、Oracle10200、Projector6600 的下载、核验及对应配置。
-
-## Oracle 到 EEG 的三步
-
-1. **准备文字 Teacher。** 把训练样本的类别、统计信息和问题写成文字，让同一个冻结 4B 回答。程序计算标准答案；只把答对的 Train 回答作为监督，完整 Val 保留，包括文字答错的题。
-2. **训练 Oracle token bank。** 用类别和统计档位选取可训练的 80 个 soft tokens，连同问题送进冻结 4B；根据答案监督和文字 Teacher 蒸馏更新 bank。类别和统计文字不放进这条学生输入。独立验证类别、统计和完整报告后，再决定是否进入 EEG 阶段。
-3. **训练 EEG Projector。** 冻结 Encoder、4B 和训练好的 Oracle；EEG 经 Encoder＋Projector 产生对应的 80 个 tokens，同时做答案 SFT 和逐 token Oracle 对齐。推理只需要 EEG、问题和模型，不需要正确类别/统计值。
-
-当前 Oracle 没有 diversity loss，初始化锚定也不是 diversity loss。不同字段有固定 token 分组，但这不保证同组每个 token 都学到独立功能；先看验证集效果与 token 相似度，再单独做损失消融。当前公开 EEG 入口使用冻结的 10200 步 Oracle；新大批次 Teacher 生成和 Oracle 训练器的就绪范围见下表。
-
-## 技术栈：训练和推理分开环境
-
-运行平台为 Linux、NVIDIA GPU，底座使用原始 Qwen3-4B。训练环境用 Python 3.10，新版推理环境用 Python 3.11。
-
-| 环节 | 技术栈 | 用途 |
-|---|---|---|
-| 特征提取与可微训练 | PyTorch 2.5.1 / CUDA 12.4、Transformers 4.57.6、NumPy 1.26.4 | 冻结 Encoder/4B，按阶段更新 Oracle bank 或 Projector；保留经过 4B 输入 embedding 的梯度 |
-| 新版独立生成与评测 | **vLLM 0.32.0+cu129 / V1**、PyTorch 2.13.0 / CUDA 12.9、Transformers 5.19.0、NumPy 2.3.5 | BF16、`prompt_embeds` soft-prefix 输入；显式选择 `ar_backend: "v1"`，移除旧 V0 标志；验收范围见升级说明 |
-| 历史生成与复现 | vLLM 0.9.2 / V0、PyTorch 2.7.0 / CUDA 12.6、Transformers 4.53.3、NumPy 2.2.6 | 保留旧环境与历史 Oracle 复现器；进程内设置 `VLLM_USE_V1=0` |
-| 数据处理 | MNE、SciPy、LMDB、h5py | 原始 EEG 预处理、Native200 读取、显式路径映射 |
-| 权重与评测结果 | safetensors、PyTorch checkpoint、JSON/JSONL | 推理权重、严格恢复所需优化器/RNG、原始生成和独立解析评分 |
-
-训练版本固定在 [requirements-train.txt](requirements-train.txt)，新版推理使用
-[requirements-ar-v1.txt](requirements-ar-v1.txt)，历史复现保留
-[requirements-ar.txt](requirements-ar.txt)。安装命令见[运行指南](docs/AGENT_RUNBOOK.md#environment)。
-**三个依赖文件对应不同环境，不要混装。** H20 仍需先短测；旧配置省略 `ar_backend` 时继续走 legacy，新配置模板已显式选择 V1。
-
-训练 forward/backward 使用 PyTorch＋Transformers；vLLM 用于独立生成与评测，不承担
-prefix 梯度训练。历史 Oracle 训练内部的 Student rollout 使用 Transformers `generate`，
-也不要与独立 vLLM 评测混淆。
-
-## 代码入口与就绪范围
-
-| 代码 | 当前状态 |
-|---|---|
-| `elm_pipeline/cli.py` | 已实现 `check / features / train / evaluate / report` 分阶段入口 |
-| `elm_pipeline/encoders.py`、`features.py` | 两路冻结 Encoder 与特征重建，已做有限样本服务器核对 |
-| `elm_pipeline/training.py`、`projector.py` | EEG Projector 的 SFT＋token 对齐、保存/严格恢复，服务器 30→35 步短测通过 |
-| `elm_pipeline/evaluation.py` | 实际 vLLM 生成、完整题目覆盖检查、独立评分和报告，已跑通 |
-| `elm_pipeline/adapters/` | 已提供九个原始数据入口；目前仅 ADFTD 完成新 raw 输入验收，逐项状态见数据清单 |
-| `tools/reproduce.py` | 已有历史 3600 步 Oracle 的隔离复现入口，需要另外提供其数据和模型资产 |
-| `reference/` | 历史源码快照，不能直接当作新批次运行命令 |
-| 新 10 万候选题／3 万步 Oracle 批次 | 目前为提案，新题库构建、变体训练和批量 launcher 尚未接齐；不是 clone 后就能启动的六组实验 |
-
-## 给运行 Agent：尽量多卡并行
-
-**资源允许时，把已经批准的实验组和随机种子分配到尽可能多的 GPU 同时运行，不要默认逐组串行。** 并发数取“已批准且就绪的任务数”和“实际获准使用、显存达标的 GPU 数”中的较小值，不默认限制成 1、2 或 4 卡。
-
-- 当前入口是一任务一卡；每个任务分配不同物理卡，在其配置中写单卡 `gpus: [编号]`。`gpus` 填多个编号只表示候选卡，不会把一个训练任务变成多卡训练；不要直接用 `torchrun` 启动多份重复训练。
-- 每个任务使用独立配置、输出目录、日志、checkpoint、缓存和锁；模型权重可以只读共享。同一任务的训练、恢复和评估按顺序执行，不并发写同一目录。
-- 先在一张 H20 做同一实现的短测和速度标定，通过后并行展开；空出卡就接下一个已批准任务。按可用显存和分配白名单调度，保留显存/磁盘保护，不终止他人进程。
-- Oracle 下一批建议扩大到 **10 万候选训练问题、每组 3 万训练步**，在 1/2/3 万步统一评估。这里指增加问题量和优化步数，**学习率不跟着调大**。详细配置见[计划](docs/NEXT_DAY_PLAN.md#h20-oracle-扩大训练提案)。
-
-以上 Oracle 数字是新一轮提案，尚未启动；新批量训练入口及 H20 验收仍需补齐。不要把历史 `configs/next_batch.json` 的 3600 步复现当成新批次，也不要修改已关闭运行来增加预算。
-
-## 先做静态检查
+平台：Linux x86_64、NVIDIA GPU，驱动需兼容所选 CUDA 构建。建议至少200 GiB可用空间。模型执行只在授权服务器进行。
 
 ```bash
-git clone git@github.com:wythedee/elm-train.git
+git clone https://github.com/wythedee/elm-train.git
 cd elm-train
-python3 -B tools/test_pipeline_static.py
-python3 -B tools/test_validate_data.py
-python3 -B tools/workbench.py check
-python3 -B tools/test_reproduce.py
+
+# 替换为获准使用的服务器工作目录，之后保持同一个值。
+export ELM_WORK=/work/elm
+bash tools/setup_server.sh
 ```
 
-这些命令不训练、不加载模型、不使用 GPU。模型执行只在授权 Linux 服务器进行。
+脚本并行安装三个独立环境，再并行下载数据、原始4B和组件权重。普通包走阿里云镜像，CUDA构建和指定wheel走官方源：
 
-## 数据与模型
-
-原始 EEG、缓存、权重和环境不在 Git 中。**已训练权重发布在 [ModelScope wythedee/elm](https://modelscope.cn/models/wythedee/elm) 的 `releases/20261031/`，约1.36GB。** 4B 使用官方原始 Qwen3-4B，单独下载；数据按照配置中的根目录和路径映射读取，不要求复刻原服务器的目录。
-
-| 组件 | 对应文件 | 用途 |
+| 环节 | 环境路径 | 固定技术栈 |
 |---|---|---|
-| 两路 Encoder | `encoders/encoder_class.safetensors`、`encoders/encoder_statistics.safetensors` | 冻结提取 EEG 特征，合计约334MB |
-| Oracle10200 | `oracle/oracle10200.safetensors` | 冻结的80-token对齐目标、Oracle输入对照，约12MB |
-| Projector6600 | `projector/projector_report6600.safetensors` | 评测已有类别/统计/报告模型，约1.01GB；不作为默认fresh初始化 |
+| 特征提取、可微训练 | `$ELM_WORK/envs/train` | Python3.10、PyTorch2.5.1/cu124、Transformers4.57.6 |
+| **独立生成、推理和评测** | `$ELM_WORK/envs/ar-v1` | **Python3.11、vLLM0.32.0+cu129 / V1**、PyTorch2.13.0/cu129、Transformers5.19.0 |
+| 下载 | `$ELM_WORK/envs/download` | Python3.11、ModelScope SDK1.37.1 |
+
+训练 forward/backward 用 PyTorch＋Transformers，让梯度经过冻结4B回传到tokens/Projector。**vLLM负责生成和推理，不负责训练梯度。** 历史Oracle的训练内Student rollout使用Transformers `generate`。三套环境不能混装；新配置使用 `ar_backend: "v1"`，不带旧的 `VLLM_USE_V1=0`。
+
+需要Python3.10和3.11。已有其它位置的解释器时，启动前指定：
 
 ```bash
-# 在授权Linux服务器下载；同时核验全部文件完整SHA，不需要令牌或额外SDK。
-python3 -B tools/download_checkpoints.py --root /work/elm-models/elm
+export ELM_PYTHON_TRAIN=/actual/python3.10
+export ELM_PYTHON_AR=/actual/python3.11
+bash tools/setup_server.sh
 ```
 
-匹配的标签顺序、统计阈值、通道映射和组件配置一起提供。
-[推理配置](configs/pipeline_report6600.example.json) 读取已训练6600模型且禁止优化步；
-[训练短测配置](configs/pipeline_debug.example.json) 使用冻结Encoder/Oracle并fresh初始化Projector。
-权重不含优化器/RNG，不能用它们冒充严格续训；详细步骤见[权重指南](docs/CHECKPOINTS.md)。
+若服务器用Conda且缺少这两个版本，可在获准工作区创建：
 
-校验优先使用条数、标签、通道/采样率/单位、窗口、受试者身份和坏样本记录，不强制所有原始文件 SHA 相同。历史清单为 Train313626 / Val61474 / Test72445，包含窗口限制及同源名称，不能直接解释为独立全量原始记录。
+```bash
+conda create -y -p "$ELM_WORK/python310" python=3.10
+conda create -y -p "$ELM_WORK/python311" python=3.11
+export ELM_PYTHON_TRAIN="$ELM_WORK/python310/bin/python"
+export ELM_PYTHON_AR="$ELM_WORK/python311/bin/python"
+bash tools/setup_server.sh
+```
 
-**已知切分问题：**MUMTAZ 与 NEMAR_MDD 同源，CHB01 与 CHB21 也是同一人。历史独立切分有重叠，当前结果用于 debug；正式泛化必须同时检查数据切分和冻结 Encoder 的训练来源。
+缓存、临时文件、环境和日志均在 `ELM_WORK`。日志在 `setup/{train,ar-v1,download,assets}.log`；成功后有 `setup/assets_ready.json`。脚本核对模型版本、数据文件大小与条数，不再完整扫描79GB数据SHA，不运行优化步。数据上传未完成时自动等待完整发布标记，默认最长6小时。失败后保留已下载文件，按日志修复后重试；不要自动改系统驱动。
 
-## 当前训练设置
+## 2. 数据和权重地址
 
-每条 EEG 输出 80×2560：32 个类别位置和六组各 8 个统计位置。两路特征保留 200→50 维压缩及每通道两个时间位置。监督为答案 CE＋归一化 token MSE＋0.1 cosine 对齐；正确类别和统计值仅用于监督，不作为 EEG 学生的文字输入。默认不加 KL、辅助头或 diversity loss。
+| 资产 | 获取位置 | 使用方式 |
+|---|---|---|
+| 完整现有预处理数据 | [wythedee/elm-data](https://modelscope.cn/datasets/wythedee/elm-data)，`releases/native200_20261101/` | 16来源、447545段；约79.3GB信号文件，另有清单；**上传进行中** |
+| 原始Qwen3-4B | [Qwen/Qwen3-4B](https://modelscope.cn/models/Qwen/Qwen3-4B) | 冻结语言模型，使用记录中的原始版本 |
+| 两路Encoder | [wythedee/elm](https://modelscope.cn/models/wythedee/elm)，`releases/20261031/encoders/` | 冻结提取类别/统计特征，约334MB |
+| Oracle10200 | 同一模型库的 `oracle/oracle10200.safetensors` | 冻结的80-token对齐目标及Oracle对照，约12MB |
+| Projector6600 | 同一模型库的 `projector/projector_report6600.safetensors` | 单独评测已有模型，约1.01GB；fresh训练默认新初始化 |
 
-报告分开列类别、六项统计、完整报告七项全对、格式有效率和支持数。旧报告训练的 6600 步 Val 全对为 8/128，格式为 100%；这两者不能混用。详情与限制见下一步计划。
+公开下载无需令牌。代码放GitHub，数据放ModelScope dataset，权重放ModelScope model。EEG、缓存、凭据、逐人预测和大checkpoint不提交Git。
+
+```text
+$ELM_WORK/
+  envs/{train,ar-v1,download}/
+  data/releases/native200_20261101/
+    manifests/DATASET/{train,val,test}.jsonl
+    native200/DATASET/processed_average/data.mdb
+    h5/MI_10_HeBin2021_LR.h5
+    dataset_manifest.json
+  models/Qwen3-4B/
+  models/elm/releases/20261031/
+  configs/    features/    runs/    setup/    cache/    tmp/
+```
+
+清单使用相对路径，配置填 `manifest_root` 和 `data_root` 即可；标签顺序、统计阈值和通道映射随权重提供。已有预处理数据可直接使用，原始数据重建见[预处理代码和来源](docs/DATASETS.md#preprocessing-code-and-source-access)。手动获取见[数据指南](docs/TRAINING_DATA.md)和[权重指南](docs/CHECKPOINTS.md)。
+
+当前预处理池：Train313626 / Val61474 / Test72445，约577小时保留窗口。原预处理含抽样上限；共享目录2.77TB原始数据还有扩充空间。已知Mumtaz/NEMAR同源、CHB01/21同人，正式泛化需要统一核对切分和冻结Encoder来源。
+
+## 3. 首次H20做一次短启动，然后执行实验配置
+
+代码已在A100跑通特征、训练、真实生成和报告。首次H20执行保留一次短启动检查，无需反复跑全部静态测试、旧实验或恢复演练。
+
+```bash
+export ELM_GPU=2  # 替换成明确分配给本任务的物理GPU
+python3 tools/make_server_config.py --work "$ELM_WORK" --gpu "$ELM_GPU"
+export ELM_CFG="$ELM_WORK/configs/pilot35.json"
+export ELM_TRAIN_PY="$ELM_WORK/envs/train/bin/python"
+
+"$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" check
+"$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" features
+"$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" train
+"$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" evaluate --tag pilot35
+CUDA_VISIBLE_DEVICES='' "$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" report
+```
+
+生成配置取16来源每Train/Val各2条，fresh Projector35步；调度器按阶段选择训练/vLLM环境。它检查启动与完整链路，不以35步准确率判断模型好坏。必要的冻结状态、有限Loss、checkpoint和输出覆盖检查保留。历史身份重叠仅在明确标记的软件短测里记录容许，不据此声称独立泛化。
+
+之后按提供的正式实验配置执行相同五阶段：`check → features → train → evaluate → report`。同版本特征只提取一次，后续Loss组复用；严格恢复保持同一配置和已提交状态。已有6600权重的单独评测是可选项：
+
+```bash
+python3 tools/make_server_config.py --work "$ELM_WORK" --gpu "$ELM_GPU" \
+  --mode report6600 --name report6600 --features "$ELM_WORK/features/pilot35"
+# 对 configs/report6600.json 只执行 check / evaluate / report。
+```
+
+新大批次Oracle题库/训练器尚未全部交付，由我们补齐。Agent执行收到的配置，不猜缺失实现或自行设计实验。当前新入口支持类别、六统计和完整报告；其它历史推理任务单独见源码和状态说明。
+
+## 4. 并行和效率
+
+- 已批准且就绪的组与seed尽量使用多张获准GPU并行，一任务一卡；并发数取就绪任务数与获准显存达标GPU数的较小值。
+- 每个任务独立配置、输出、日志和checkpoint；完成的特征与权重只读共享，避免重复下载和提特征。
+- `gpus: [2,3]`表示候选卡，不是DDP；独立任务各填单卡，不用`torchrun`复制同一任务。
+- 同一任务训练、恢复、评测顺序执行。推理用vLLM批量生成；后端细节见[版本说明](docs/VLLM_UPGRADE.md)。
+- 保留显存/磁盘保护和owned进程清理，仅使用分配给本任务的资源。
+
+## 5. 交回结果
+
+交回 `final_report.md`、`results_summary.json`、实际配置、代码commit、数据覆盖、训练日志和失败原因。逐样本raw与checkpoint保留在私有工作区，按用户要求交回。类别、六统计、七项报告全对、格式和支持数分开列；格式正确不等于事实正确。
+
+当前EEG训练冻结两Encoder、4B和Oracle，只训约2.54亿参数Projector，使用答案CE＋归一化token MSE＋0.1 cosine；默认不加KL、辅助头或diversity loss。Oracle阶段则训练token bank，文字Teacher用于监督/蒸馏。
+
+深入定位再看：[完整运行参考](docs/AGENT_RUNBOOK.md)、[数据与原始入口](docs/DATASETS.md)、[实现状态](docs/PIPELINE_STATUS.md)、[实验提案](docs/NEXT_DAY_PLAN.md)、[历史Oracle](docs/ORACLE_ARCHIVE.md)。提案不替代可执行正式配置。

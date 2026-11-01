@@ -1,0 +1,2 @@
+# Separate Linux asset-management environment; do not mix with train/vLLM.
+modelscope==1.37.1

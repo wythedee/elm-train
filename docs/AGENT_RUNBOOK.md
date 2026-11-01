@@ -2,9 +2,12 @@
 
 ## Readiness and scope
 
-For the collaborator's first H20 run, start with [H20_HANDOFF.md](H20_HANDOFF.md).
-It defines the immediate job, order, stop conditions and private return artifacts;
-this document supplies the lower-level commands and interfaces.
+Start with the current [README](../README.md): its setup script prepares the
+isolated environments and parallel asset downloads, and its configuration helper
+sets the actual workspace paths. Run one short startup per new implementation;
+do not repeat the full static suites or recovery drills. This document provides
+lower-level/manual commands and diagnostic details. The older H20 handoff is a
+reference, not an additional mandatory test sequence.
 
 Read `PIPELINE_STATUS.md` and `NEXT_DAY_PLAN.md` before scheduling hardware. The
 old `tools/reproduce.py` is an archived Oracle-only experiment. It is not the new
@@ -72,7 +75,7 @@ inside the training process use Transformers `generate`; this is distinct from
 the independent vLLM evaluator. A future large-batch Teacher data generator is
 not yet supplied by the current public entry.
 
-Run static tests without a model or GPU:
+For maintainers changing code, optional static checks without a model or GPU:
 
 ```bash
 python3 -B tools/test_pipeline_static.py
