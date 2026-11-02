@@ -32,7 +32,7 @@ def sha(path):
 def config(path):
     path = Path(path).resolve(strict=True)
     cfg = read(path)
-    for key in ("output", "manifest_root", "encoder_bundle", "model", "oracle", "schema", "thresholds", "features", "initial_projector", "evaluation_checkpoint", "debug_selection", "data_root", "tmpdir", "reference_label_features", "reference_statistics_features"):
+    for key in ("output", "manifest_root", "encoder_bundle", "model", "oracle", "oracle_initial_checkpoint", "schema", "thresholds", "features", "initial_projector", "evaluation_checkpoint", "debug_selection", "data_root", "tmpdir", "reference_label_features", "reference_statistics_features"):
         if cfg.get(key):
             p = Path(os.path.expandvars(cfg[key])).expanduser()
             cfg[key] = str((path.parent / p).resolve() if not p.is_absolute() else p.resolve())

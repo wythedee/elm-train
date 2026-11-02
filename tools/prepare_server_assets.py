@@ -101,6 +101,11 @@ def dataset_download(work, workers, wait_seconds, stopped):
         path = root / safe_release_path(item["path"])
         if not path.is_file() or path.stat().st_size != item["bytes"]:
             raise ValueError("Missing/incomplete dataset file: " + item["path"])
+    initial = json.loads((REPO / "metadata/oracle_initial80.json").read_text())
+    initial_path = root / safe_release_path(initial["path"])
+    if (not initial_path.is_file() or initial_path.stat().st_size != initial["bytes"]
+            or digest(initial_path) != initial["sha256"]):
+        raise ValueError("Fresh Oracle initializer is missing or differs; preserve the download and retry")
     actual = {}
     for dataset, splits in inventory["datasets"].items():
         if Path(dataset).name != dataset or dataset in (".", ".."):
@@ -113,6 +118,7 @@ def dataset_download(work, workers, wait_seconds, stopped):
             if actual[dataset][split] != splits[split]:
                 raise ValueError("Dataset row count differs: " + dataset + "/" + split)
     return {"data_root": str(root / PREFIX), "manifest_root": str(root / PREFIX / "manifests"),
+            "oracle_initial_checkpoint": str(initial_path),
             "dataset_counts": actual, "dataset_file_sizes_checked": len(files),
             "dataset_full_SHA_repeated": False}
 

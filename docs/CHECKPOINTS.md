@@ -15,6 +15,15 @@
 两个 Encoder 文件已包含该特征提取器所需的骨干、适配器和压缩参数，不需要再下载一个骨干权重覆盖它们。
 它们不是从头训练 16 专家时所需的完整训练状态。严格续训须另外使用原完整 checkpoint。
 
+新增的 **fresh Oracle step0 初始值**在数据集
+`wythedee/elm-data/releases/native200_20261101/assets/oracle_initial80.safetensors`，
+约11.6MB；[独立清单](../metadata/oracle_initial80.json)固定来源、大小和SHA。
+它与原fresh初始化逐张量相等，已在JS5通过公开SDK实际下载与完整SHA核验。
+`setup_server.sh`会随数据一起获取，`pipeline10`配置使用它训练新的Oracle；
+上述10200步权重继续用于已训练Oracle对照。初始值不含优化器/RNG，也不包含训练后的10步结果。
+这份初始值单独放在dataset/assets，是因为发布时ModelScope模型库目录API暂时返回500；
+数据集API和公开SDK下载正常。旧四份权重的地址和文件保持不变。
+
 ## 1. 在服务器下载和校验
 
 不需要令牌，也不需要安装 ModelScope SDK。下载器只用 Python 标准库；保留断点，

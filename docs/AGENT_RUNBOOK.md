@@ -22,9 +22,12 @@ Use `DATASETS.md` for the per-source count/adapter/version checklist. In
 particular the CHB adapter preserves a known legacy case split; the full identity
 audit rejects CHB01/21 spanning splits until a corrected person policy is supplied.
 
-The new task interface currently covers class reading, six statistic reads, and a
-complete report. Historical comparison/count/policy/OPSD code is in `reference/`;
-those experiments are not automatically enabled by this interface.
+The EEG task interface covers class reading, six statistic reads, and a complete
+report. The new Oracle software path additionally supports four simple ordinal
+operations using the frozen27B wording pool: `teacher / oracle_train /
+oracle_evaluate`. Follow README's `pipeline10` config; the Oracle worker currently
+permits at most ten engineering steps. Historical count/policy/OPSD code remains
+in `reference/`, not automatically enabled. Details: [TEN_STEP_CHECK.md](TEN_STEP_CHECK.md).
 
 ## Environment
 
@@ -72,8 +75,9 @@ needs an autograd path from its input embeddings to the trainable prefix; do not
 replace that training forward with a vLLM inference call. Standalone AR generation
 and evaluation use vLLM with `prompt_embeds`. Historical Oracle Student rollouts
 inside the training process use Transformers `generate`; this is distinct from
-the independent vLLM evaluator. A future large-batch Teacher data generator is
-not yet supplied by the current public entry.
+the independent vLLM evaluator. The new unassisted Teacher/Oracle stages are now
+implemented and checked for the bounded ten-step flow; full-scale long training
+and additional ablation schedules remain separate work.
 
 For maintainers changing code, optional static checks without a model or GPU:
 

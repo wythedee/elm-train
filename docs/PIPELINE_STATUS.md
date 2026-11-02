@@ -14,16 +14,18 @@ ADFTD source files and completed preprocessing → features → generation → r
 Both used authorized A100 servers. These are software acceptance tests.
 
 `tools/reproduce.py` remains the archived 80-token Oracle-only entry point, and
-`reference/` remains an archive. The new interface uses the frozen 10200-step
-Oracle; it does not yet implement a new full-corpus teacher/Oracle training stage
-or training all Encoders from scratch. Do not substitute the archived command for
+`reference/` remains an archive. On 2026-11-02 the new `teacher / oracle_train /
+oracle_evaluate` stages completed an independent JS5 ten-step software run,
+followed by EEG Projector10 using that fresh Oracle10. See [TEN_STEP_CHECK.md](TEN_STEP_CHECK.md).
+This does not implement a full-corpus long-running Oracle experiment or training
+all Encoders from scratch. Do not substitute the archived command for
 full EEG pretraining, or launch a heavy H20 batch from these bounded results.
 
 | Stage | Evidence available | Remaining acceptance work |
 |---|---|---|
 | Raw data → Native200 | Nine adapters included; ADFTD: 9 people, 18 windows, 6/6/6 Train/Val/Test, zero errors | Eight included routes still need raw-input tests; seven other raw routes are not all packaged |
 | Native200 → frozen Encoder features | All 16 logical sources, 2 Train + 2 Val records each; 64 fresh records match the old cache within the declared BF16 tolerance, masks/bins exact | Full-corpus extraction, corrected subject identity, each raw-version equivalence |
-| Facts → Oracle tokens → frozen 4B | Frozen Oracle positive control generated alongside the Projector | New teacher/Oracle training through this interface; H20 acceptance |
+| Facts → Oracle tokens → frozen 4B | JS5: 160 fresh unassisted Teacher outputs; 95 correctTrain retained, full40Val kept; fresh Oracle10 and40 Val AR completed, optimizer/RNG/gradients/independent parser checks passed | Long-run resume/on-policy/ablations, H20 and new V1 Teacher/Oracle entry |
 | EEG features → Projector → frozen 4B | New entry trained 0→30 and strictly restored 30→35; all parameters/80 slots received gradients; 512 AR queries and reports completed | Full-data training, scientific ablations and H20 |
 | Source EEG → report | ADFTD source → Native200 → both Encoders → existing step-35 Projector/Oracle → 96 AR queries, no extra optimization | Other raw adapters and meaningful trained-model evaluation |
 | Exported trained weights → report | Safe step-6600 Projector independently loaded on NORVE; 512 queries on the 32-record subset plus 96 on the raw ADFTD subset, no extra optimization; dependency/coverage/raw-summary checks passed | Full evaluation with matched inputs and corrected data protocol |

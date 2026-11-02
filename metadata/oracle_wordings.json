@@ -1,0 +1,583 @@
+{
+  "author_model": "Qwen/Qwen3.8-27B",
+  "historical_plan_sha256": "1622b5c698e3b18af638e899e918e97d4d75ac406872094adbe03a15afc3a1db",
+  "templates": [
+    {
+      "id": "choose_higher_t01",
+      "operation": "choose_higher",
+      "wording": "Pick the record with the higher {field} bin: {record_a} or {record_b}?",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t02",
+      "operation": "choose_higher",
+      "wording": "Which record, {record_a} or {record_b}, falls in the higher {field} bin?",
+      "partition": "val"
+    },
+    {
+      "id": "choose_higher_t03",
+      "operation": "choose_higher",
+      "wording": "Select the entry with the top {field} ordinal level between {record_a} and {record_b}.",
+      "partition": "val"
+    },
+    {
+      "id": "choose_higher_t04",
+      "operation": "choose_higher",
+      "wording": "Identify the record showing the greater {field} bin: {record_a} vs {record_b}.",
+      "partition": "val"
+    },
+    {
+      "id": "choose_higher_t05",
+      "operation": "choose_higher",
+      "wording": "Is {record_a} or {record_b} in the higher {field} bin?",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t06",
+      "operation": "choose_higher",
+      "wording": "Determine which of {record_a} or {record_b} has the elevated {field} bin.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t07",
+      "operation": "choose_higher",
+      "wording": "Choose the record with the superior {field} ordinal category: {record_a} or {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t08",
+      "operation": "choose_higher",
+      "wording": "Between {record_a} and {record_b}, which has the higher {field} bin?",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t09",
+      "operation": "choose_higher",
+      "wording": "Mark the record possessing the higher {field} bin: {record_a} or {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t10",
+      "operation": "choose_higher",
+      "wording": "Find the record with the maximum {field} bin among {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t11",
+      "operation": "choose_higher",
+      "wording": "Which record, {record_a} or {record_b}, corresponds to the higher {field} bin?",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t12",
+      "operation": "choose_higher",
+      "wording": "Select the option with the higher {field} ordinal bin: {record_a} or {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t13",
+      "operation": "choose_higher",
+      "wording": "Indicate the record with the higher {field} bin: {record_a} or {record_b}.",
+      "partition": "test"
+    },
+    {
+      "id": "choose_higher_t14",
+      "operation": "choose_higher",
+      "wording": "Compare {record_a} and {record_b}; which holds the higher {field} bin?",
+      "partition": "test"
+    },
+    {
+      "id": "choose_higher_t15",
+      "operation": "choose_higher",
+      "wording": "Name the record with the higher {field} bin: {record_a} or {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t16",
+      "operation": "choose_higher",
+      "wording": "Pick the entry in the higher {field} bin: {record_a} or {record_b}.",
+      "partition": "test"
+    },
+    {
+      "id": "choose_higher_t17",
+      "operation": "choose_higher",
+      "wording": "Determine the record with the greater {field} ordinal level: {record_a} or {record_b}.",
+      "partition": "val"
+    },
+    {
+      "id": "choose_higher_t18",
+      "operation": "choose_higher",
+      "wording": "Is the higher {field} bin found in {record_a} or {record_b}?",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t19",
+      "operation": "choose_higher",
+      "wording": "Select the record representing the higher {field} bin: {record_a} or {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t20",
+      "operation": "choose_higher",
+      "wording": "Which of {record_a} or {record_b} is in the higher {field} bin?",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t21",
+      "operation": "choose_higher",
+      "wording": "Identify the record with the top {field} bin: {record_a} or {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t22",
+      "operation": "choose_higher",
+      "wording": "Choose the record with the elevated {field} bin: {record_a} or {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_higher_t23",
+      "operation": "choose_higher",
+      "wording": "Find the record with the higher {field} ordinal bin: {record_a} or {record_b}.",
+      "partition": "test"
+    },
+    {
+      "id": "choose_higher_t24",
+      "operation": "choose_higher",
+      "wording": "Mark the record with the higher {field} bin: {record_a} or {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t01",
+      "operation": "choose_lower",
+      "wording": "Pick the record with the lower {field} bin between {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t02",
+      "operation": "choose_lower",
+      "wording": "Which record has the lower {field} ordinal level: {record_a} or {record_b}?",
+      "partition": "val"
+    },
+    {
+      "id": "choose_lower_t03",
+      "operation": "choose_lower",
+      "wording": "Identify the entry with the smaller {field} bin from {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t04",
+      "operation": "choose_lower",
+      "wording": "If {record_a} and {record_b} differ in {field}, select the one in the lower bin.",
+      "partition": "test"
+    },
+    {
+      "id": "choose_lower_t05",
+      "operation": "choose_lower",
+      "wording": "Return the record among {record_a} and {record_b} that sits in the lower {field} bin.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t06",
+      "operation": "choose_lower",
+      "wording": "Compare {record_a} and {record_b} by {field}; name the lower bin entry.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t07",
+      "operation": "choose_lower",
+      "wording": "State whether {record_a} or {record_b} has the lower {field} bin.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t08",
+      "operation": "choose_lower",
+      "wording": "Select the record with the minimum {field} ordinal category from {record_a} and {record_b}.",
+      "partition": "test"
+    },
+    {
+      "id": "choose_lower_t09",
+      "operation": "choose_lower",
+      "wording": "Between {record_a} and {record_b}, which one has the lower {field} bin?",
+      "partition": "val"
+    },
+    {
+      "id": "choose_lower_t10",
+      "operation": "choose_lower",
+      "wording": "Choose the record whose {field} bin is lower between {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t11",
+      "operation": "choose_lower",
+      "wording": "Designate the lower {field} bin holder from {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t12",
+      "operation": "choose_lower",
+      "wording": "Find the record in the lower {field} bin among {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t13",
+      "operation": "choose_lower",
+      "wording": "Output the record with the lower {field} ordinal value: {record_a} or {record_b}?",
+      "partition": "val"
+    },
+    {
+      "id": "choose_lower_t14",
+      "operation": "choose_lower",
+      "wording": "Pick {record_a} or {record_b} based on which has the lower {field} bin.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t15",
+      "operation": "choose_lower",
+      "wording": "Indicate the record with the lower {field} bin for the pair {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t16",
+      "operation": "choose_lower",
+      "wording": "Which of {record_a} or {record_b} occupies the lower {field} bin?",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t17",
+      "operation": "choose_lower",
+      "wording": "Select the entry with the lesser {field} bin from {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t18",
+      "operation": "choose_lower",
+      "wording": "Name the record with the lower {field} ordinal level between {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t19",
+      "operation": "choose_lower",
+      "wording": "Determine the lower {field} bin record among {record_a} and {record_b}.",
+      "partition": "val"
+    },
+    {
+      "id": "choose_lower_t20",
+      "operation": "choose_lower",
+      "wording": "Return the record in the lower {field} bin if comparing {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t21",
+      "operation": "choose_lower",
+      "wording": "Choose the record with the lower {field} bin: {record_a} or {record_b}?",
+      "partition": "train"
+    },
+    {
+      "id": "choose_lower_t22",
+      "operation": "choose_lower",
+      "wording": "Identify the lower {field} bin entry from {record_a} and {record_b}.",
+      "partition": "test"
+    },
+    {
+      "id": "choose_lower_t23",
+      "operation": "choose_lower",
+      "wording": "State the record with the lower {field} bin for {record_a} and {record_b}.",
+      "partition": "test"
+    },
+    {
+      "id": "choose_lower_t24",
+      "operation": "choose_lower",
+      "wording": "Pick the record with the smaller {field} bin between {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_001",
+      "operation": "compare_level",
+      "wording": "Compare the {field} ordinal bin of {record_a} against {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_002",
+      "operation": "compare_level",
+      "wording": "Is the {field} level for {record_a} lower, equal, or higher than {record_b}?",
+      "partition": "test"
+    },
+    {
+      "id": "compare_level_cmp_003",
+      "operation": "compare_level",
+      "wording": "Determine which ordinal bin is greater: {record_a} or {record_b} for {field}.",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_004",
+      "operation": "compare_level",
+      "wording": "Rank the {field} bins of {record_a} and {record_b} relative to each other.",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_005",
+      "operation": "compare_level",
+      "wording": "Does {record_a} show a different ordinal bin for {field} compared to {record_b}?",
+      "partition": "test"
+    },
+    {
+      "id": "compare_level_cmp_006",
+      "operation": "compare_level",
+      "wording": "Identify the relative ordinal position of {record_a}'s {field} versus {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_007",
+      "operation": "compare_level",
+      "wording": "Which record has the higher ordinal bin for {field}: {record_a} or {record_b}?",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_008",
+      "operation": "compare_level",
+      "wording": "State whether the {field} bin for {record_a} is below, same as, or above {record_b}.",
+      "partition": "val"
+    },
+    {
+      "id": "compare_level_cmp_009",
+      "operation": "compare_level",
+      "wording": "Contrast the ordinal classification of {field} in {record_a} with {record_b}.",
+      "partition": "val"
+    },
+    {
+      "id": "compare_level_cmp_010",
+      "operation": "compare_level",
+      "wording": "Is the ordinal bin for {field} in {record_a} strictly greater than in {record_b}?",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_011",
+      "operation": "compare_level",
+      "wording": "Map the ordinal levels of {field} for {record_a} and {record_b} to determine their relationship.",
+      "partition": "val"
+    },
+    {
+      "id": "compare_level_cmp_012",
+      "operation": "compare_level",
+      "wording": "Check if {record_b} has a lower ordinal bin for {field} than {record_a}.",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_013",
+      "operation": "compare_level",
+      "wording": "What is the ordinal difference between {field} in {record_a} and {record_b}?",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_014",
+      "operation": "compare_level",
+      "wording": "Assign a relative rank to the {field} bins of {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_015",
+      "operation": "compare_level",
+      "wording": "Does {record_a} occupy a higher ordinal bin for {field} than {record_b}?",
+      "partition": "test"
+    },
+    {
+      "id": "compare_level_cmp_016",
+      "operation": "compare_level",
+      "wording": "Evaluate the ordinal standing of {record_a}'s {field} against {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_017",
+      "operation": "compare_level",
+      "wording": "Determine if the {field} bin for {record_b} matches, exceeds, or falls short of {record_a}.",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_018",
+      "operation": "compare_level",
+      "wording": "Compare the ordinal scales of {field} for {record_a} and {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_019",
+      "operation": "compare_level",
+      "wording": "Which ordinal bin is more elevated: {record_a} or {record_b} for {field}?",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_020",
+      "operation": "compare_level",
+      "wording": "Verify the ordinal relationship between {record_a} and {record_b} regarding {field}.",
+      "partition": "test"
+    },
+    {
+      "id": "compare_level_cmp_021",
+      "operation": "compare_level",
+      "wording": "Is the {field} ordinal bin in {record_a} identical to that in {record_b}?",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_022",
+      "operation": "compare_level",
+      "wording": "Select the correct ordinal comparison of {field} for {record_a} relative to {record_b}.",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_023",
+      "operation": "compare_level",
+      "wording": "How does the ordinal bin of {field} in {record_a} compare to {record_b}?",
+      "partition": "train"
+    },
+    {
+      "id": "compare_level_cmp_024",
+      "operation": "compare_level",
+      "wording": "Distinguish the ordinal levels of {field} between {record_a} and {record_b}.",
+      "partition": "val"
+    },
+    {
+      "id": "read_level_t01",
+      "operation": "read_level",
+      "wording": "What is the {field} level for {record_a}?",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t02",
+      "operation": "read_level",
+      "wording": "Identify the ordinal bin of {field} for {record_a}.",
+      "partition": "val"
+    },
+    {
+      "id": "read_level_t03",
+      "operation": "read_level",
+      "wording": "Which category does {record_a} fall into for {field}?",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t04",
+      "operation": "read_level",
+      "wording": "Report the {field} status for {record_a}.",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t05",
+      "operation": "read_level",
+      "wording": "Determine the {field} bin for {record_a}.",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t06",
+      "operation": "read_level",
+      "wording": "Is {record_a} low, mid, or high in {field}?",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t07",
+      "operation": "read_level",
+      "wording": "State the {field} classification for {record_a}.",
+      "partition": "test"
+    },
+    {
+      "id": "read_level_t08",
+      "operation": "read_level",
+      "wording": "What ordinal value corresponds to {record_a}'s {field}?",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t09",
+      "operation": "read_level",
+      "wording": "Select the {field} level applicable to {record_a}.",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t10",
+      "operation": "read_level",
+      "wording": "How would you categorize {record_a} by {field}?",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t11",
+      "operation": "read_level",
+      "wording": "Provide the {field} bin for {record_a}.",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t12",
+      "operation": "read_level",
+      "wording": "What is the {field} rating for {record_a}?",
+      "partition": "test"
+    },
+    {
+      "id": "read_level_t13",
+      "operation": "read_level",
+      "wording": "List the {field} category for {record_a}.",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t14",
+      "operation": "read_level",
+      "wording": "Find the {field} level associated with {record_a}.",
+      "partition": "val"
+    },
+    {
+      "id": "read_level_t15",
+      "operation": "read_level",
+      "wording": "Which {field} bin applies to {record_a}?",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t16",
+      "operation": "read_level",
+      "wording": "Define the {field} status for {record_a}.",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t17",
+      "operation": "read_level",
+      "wording": "What is the {field} ordinal for {record_a}?",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t18",
+      "operation": "read_level",
+      "wording": "Specify the {field} level for {record_a}.",
+      "partition": "val"
+    },
+    {
+      "id": "read_level_t19",
+      "operation": "read_level",
+      "wording": "Can you identify the {field} bin for {record_a}?",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t20",
+      "operation": "read_level",
+      "wording": "What does the {field} value for {record_a} indicate?",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t21",
+      "operation": "read_level",
+      "wording": "Assign the {field} level to {record_a}.",
+      "partition": "test"
+    },
+    {
+      "id": "read_level_t22",
+      "operation": "read_level",
+      "wording": "What is the {field} classification for {record_a}?",
+      "partition": "train"
+    },
+    {
+      "id": "read_level_t23",
+      "operation": "read_level",
+      "wording": "Determine the {field} category for {record_a}.",
+      "partition": "val"
+    },
+    {
+      "id": "read_level_t24",
+      "operation": "read_level",
+      "wording": "Indicate the {field} bin for {record_a}.",
+      "partition": "test"
+    }
+  ],
+  "contains_EEG_or_answers": false
+}

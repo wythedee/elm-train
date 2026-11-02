@@ -14,7 +14,7 @@ def main():
     p.add_argument("--work", type=Path, required=True)
     p.add_argument("--gpu", type=int, required=True, help="One physical GPU explicitly assigned to this job")
     p.add_argument("--name", default="pilot35")
-    p.add_argument("--mode", choices=("pilot35", "report6600"), default="pilot35")
+    p.add_argument("--mode", choices=("pilot35", "report6600", "pipeline10"), default="pilot35")
     p.add_argument("--features", type=Path, help="Existing completed feature directory, for report6600")
     args = p.parse_args()
     if args.gpu < 0 or not re.fullmatch(r"[A-Za-z0-9_-]{1,48}", args.name):
@@ -23,7 +23,7 @@ def main():
     ready = json.loads((root / "setup/assets_ready.json").read_text())
     if ready.get("status") != "assets_downloaded_and_checked":
         p.error("Run setup_server.sh and finish downloading the assets first")
-    template = "pipeline_debug.example.json" if args.mode == "pilot35" else "pipeline_report6600.example.json"
+    template = "pipeline_report6600.example.json" if args.mode == "report6600" else "pipeline_debug.example.json"
     cfg = json.loads((REPO / "configs" / template).read_text())
     weights = Path(ready["elm_weights"])
     cfg.update(output=str(root / "runs" / args.name),
@@ -38,6 +38,11 @@ def main():
                datasets=list(ready["dataset_counts"]), allow_known_legacy_overlap_for_debug=True)
     if args.mode == "report6600":
         cfg["evaluation_checkpoint"] = str(weights / "projector/projector_report6600.safetensors")
+    elif args.mode == "pipeline10":
+        cfg.update(train_steps=10,oracle_steps=10,save_every=10,eval_query_limit=80,
+                   teacher_train_queries=120,teacher_val_queries=40,
+                   oracle_initial_checkpoint=ready.get("oracle_initial_checkpoint",str(Path(ready["data_root"])/"assets/oracle_initial80.safetensors")),
+                   oracle=str(root / "runs" / args.name / "oracle10.safetensors"))
     path = root / "configs" / (args.name + ".json")
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("x") as stream:

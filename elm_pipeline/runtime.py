@@ -127,7 +127,7 @@ def run_stage(cfg, config_path, stage, extra):
         deadline = read(clock)["deadline"]
         if time.time() >= deadline:
             raise TimeoutError("Original pipeline budget expired; no clock reset")
-        admission = 26 if stage in ("features", "train") else 24
+        admission = 26 if stage in ("features", "train", "oracle_train") else 24
         lease, candidate = None, None
         while time.time() < deadline:
             for item in sorted(gpu_status(), key=lambda x: -x["free_GiB"]):
@@ -184,7 +184,7 @@ def run_stage(cfg, config_path, stage, extra):
             if not stage_clock.exists():
                 write(stage_clock, {"first_started": time.time(), "deadline": min(deadline, time.time()+cfg.get("stage_seconds", 3600))})
             env["ELM_STAGE_DEADLINE"] = str(read(stage_clock)["deadline"])
-            python = cfg["ar_python"] if stage == "evaluate" else cfg["train_python"]
+            python = cfg["ar_python"] if stage in ("evaluate", "teacher", "oracle_evaluate") else cfg["train_python"]
             env["PATH"] = str(Path(python).parent)+":"+env.get("PATH", "")
             command = [python, "-u", "-B", "-m", "elm_pipeline.cli", "--config", str(Path(config_path).resolve()),
                        "--worker", stage] + extra

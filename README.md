@@ -4,7 +4,7 @@ EEG → 冻结的两路 Encoder → 可训练 Projector → 80 个 soft tokens �
 
 **运行 Agent 从本页顺序执行。** 先准备环境、数据和权重，再运行收到的实验配置。工作目录和 GPU 使用对方服务器实际分配的值，无需复刻我们的绝对路径。
 
-当前已实现 EEG Projector 训练、恢复、vLLM 生成和报告；新的大批次 Oracle 数据生成/训练入口仍在准备。下面的35步启动小跑用于检查新服务器入口。
+已在JS5实际跑通文字Teacher生成 → fresh Oracle10步 → Oracle生成 → fresh EEG Projector10步 → 生成与报告。[本轮验证记录](docs/TEN_STEP_CHECK.md)列明范围。正式长训和消融仍需单独实现/配置，不能把10步短测当作长训验收。
 
 ## 1. 一次准备环境、数据和权重
 
@@ -57,6 +57,7 @@ bash tools/setup_server.sh
 | 原始Qwen3-4B | [Qwen/Qwen3-4B](https://modelscope.cn/models/Qwen/Qwen3-4B) | 冻结语言模型，使用记录中的原始版本 |
 | 两路Encoder | [wythedee/elm](https://modelscope.cn/models/wythedee/elm)，`releases/20261031/encoders/` | 冻结提取类别/统计特征，约334MB |
 | Oracle10200 | 同一模型库的 `oracle/oracle10200.safetensors` | 冻结的80-token对齐目标及Oracle对照，约12MB |
+| fresh Oracle初始值 | 数据库的 `releases/native200_20261101/assets/oracle_initial80.safetensors` | 从头训练Oracle用，step0，约12MB；准备脚本一起获取 |
 | Projector6600 | 同一模型库的 `projector/projector_report6600.safetensors` | 单独评测已有模型，约1.01GB；fresh训练默认新初始化 |
 
 公开下载无需令牌。代码放GitHub，数据放ModelScope dataset，权重放ModelScope model。EEG、缓存、凭据、逐人预测和大checkpoint不提交Git。
@@ -78,34 +79,37 @@ $ELM_WORK/
 
 当前预处理池：Train313626 / Val61474 / Test72445，约577小时保留窗口。原预处理含抽样上限；共享目录2.77TB原始数据还有扩充空间。已知Mumtaz/NEMAR同源、CHB01/21同人，正式泛化需要统一核对切分和冻结Encoder来源。
 
-## 3. 首次H20做一次短启动，然后执行实验配置
+## 3. 先执行完整10步小跑
 
-代码已在A100跑通特征、训练、真实生成和报告。首次H20执行保留一次短启动检查，无需反复跑全部静态测试、旧实验或恢复演练。
+同一实现首次H20执行保留一次完整小跑，无需反复跑静态套件和旧实验。JS5本轮使用现有vLLM0.9.2；新版0.32此前通过独立A100推理验收，新Teacher/Oracle入口在H20/V1仍需首次运行。
 
 ```bash
 export ELM_GPU=2  # 替换成明确分配给本任务的物理GPU
-python3 tools/make_server_config.py --work "$ELM_WORK" --gpu "$ELM_GPU"
-export ELM_CFG="$ELM_WORK/configs/pilot35.json"
+python3 tools/make_server_config.py --work "$ELM_WORK" --gpu "$ELM_GPU" --mode pipeline10 --name pipeline10
+export ELM_CFG="$ELM_WORK/configs/pipeline10.json"
 export ELM_TRAIN_PY="$ELM_WORK/envs/train/bin/python"
 
 "$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" check
 "$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" features
+"$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" teacher
+"$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" oracle_train
+"$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" oracle_evaluate
 "$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" train
-"$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" evaluate --tag pilot35
+"$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" evaluate --tag pipeline10
 CUDA_VISIBLE_DEVICES='' "$ELM_TRAIN_PY" -B -m elm_pipeline.cli --config "$ELM_CFG" report
 ```
 
-生成配置取16来源每Train/Val各2条，fresh Projector35步；调度器按阶段选择训练/vLLM环境。它检查启动与完整链路，不以35步准确率判断模型好坏。必要的冻结状态、有限Loss、checkpoint和输出覆盖检查保留。历史身份重叠仅在明确标记的软件短测里记录容许，不据此声称独立泛化。
+配置取16来源每Train/Val各2条，文字Teacher生成120Train＋40Val；只保留答对Train进行Oracle10步，Val不筛除。Oracle从step0初始化，EEG Projector也fresh初始化，使用本轮Oracle10作为冻结对齐目标。四种简单操作沿用27B生成的96种题面及Train/Val措辞分组。调度器按阶段选择训练/vLLM环境。检查冻结、梯度、有限Loss、保存和输出覆盖；10步不用于判断准确率和泛化。已知历史身份重叠在软件短测中记录，正式泛化需另修切分和Encoder来源。
 
 之后按提供的正式实验配置执行相同五阶段：`check → features → train → evaluate → report`。同版本特征只提取一次，后续Loss组复用；严格恢复保持同一配置和已提交状态。已有6600权重的单独评测是可选项：
 
 ```bash
 python3 tools/make_server_config.py --work "$ELM_WORK" --gpu "$ELM_GPU" \
-  --mode report6600 --name report6600 --features "$ELM_WORK/features/pilot35"
+  --mode report6600 --name report6600 --features "$ELM_WORK/features/pipeline10"
 # 对 configs/report6600.json 只执行 check / evaluate / report。
 ```
 
-新大批次Oracle题库/训练器尚未全部交付，由我们补齐。Agent执行收到的配置，不猜缺失实现或自行设计实验。当前新入口支持类别、六统计和完整报告；其它历史推理任务单独见源码和状态说明。
+当前新Oracle worker明确限于software_debug、最多10步；长训的恢复、on-policy调度和新增消融不由Agent临时改出来。它们仍需我们提供独立实现和正式配置。当前新Oracle支持类别、六统计、完整报告及四种简单操作；EEG Projector训练/评测支持类别、六统计和报告。
 
 ## 4. 并行和效率
 

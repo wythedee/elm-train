@@ -18,21 +18,23 @@
     "elm_pipeline/adapters/scalp_native200.py": "716a56987eec777de9871dd62a223ab7334e2c44fc7835b7a3bfd38225906f5e",
     "elm_pipeline/backends.py": "ce297aef360b8f917ad43ead477d9de66c7feb600b3d5a548eca6fb3e4f5d8e2",
     "elm_pipeline/channels.py": "af1ddab486655d8b524fafe253b1cf1aa5a6d73c439366d36b93892ff7441d92",
-    "elm_pipeline/cli.py": "a7a21bd31ffd7fa85291f5d639cd0ad472e925baa8f9b0889aecff2c09ed3beb",
+    "elm_pipeline/cli.py": "0035edad4fd0277a8f5721481541256132fd9858d2486d0d1d5c13893ffb1dde",
     "elm_pipeline/data.py": "27e34e7c004906af44cb88035a1717a68686edd83ef012ccb27b255a02dfbdd9",
     "elm_pipeline/encoders.py": "0ff2f7e35ea6ce7fb62712269a2d9b3bc4444c4dc118a6aebb9b1f3fc1a691aa",
     "elm_pipeline/evaluation.py": "cfedc683acd3a6465418a4b7470b3d36c2b652a4f1894f5587411519a300e951",
     "elm_pipeline/features.py": "e6bf86fc126929fe4e1487377d71cf3e4ccdb0ce82720ad8d90b707a1d8caa88",
-    "elm_pipeline/io.py": "891e97ec211865d50867827d67ac11961cca3812ae044de89f3b0633bccca1f6",
+    "elm_pipeline/io.py": "344a0ea7922dbc2bbe13827d103f68dc66fa8e35bf71034e7f4d3c93d06bd01f",
     "elm_pipeline/projector.py": "bc4ddf7c37621027af36db14f26fd39e384d2bb39982b96efb39c3ab6b3751ee",
-    "elm_pipeline/runtime.py": "cd057e4a5223b9cfefcfa4fa78ca4ef5914e36c971e26a1cdbaa401a90810e32",
+    "elm_pipeline/runtime.py": "898971e2b15e801ef0481e9ec0dabe242cc3de4f6b02a7f920fb7dff3e244dc3",
     "elm_pipeline/signals.py": "46957c8f5506899b0055223e7e288a68b8892a27486d8931c4ff530afad7e84c",
     "elm_pipeline/tasks.py": "2fb3d5c2ac003bc4c0a958d40755a2ec4748742a78909b207389ab6d00ce4194",
     "elm_pipeline/training.py": "36e137378b2766ce9b5a7ae2c4fde897ce5e1a57fa9d93b7856537c8b6570554",
     "elm_pipeline/vendor/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "elm_pipeline/vendor/cbramod/__init__.py": "f21c65d4385400f231d1c959205842f640bee38e9f010daa32a7fa734df25edf",
     "elm_pipeline/vendor/cbramod/cbramod.py": "e8193e557ee3ca3f422c17ae661fb8e4df671d9228c413ea092d879af1b8296b",
-    "elm_pipeline/vendor/cbramod/criss_cross_transformer.py": "90e90b8c98ca7eb543c44e32afc29674d3f71cb090692ad9f82db3a43edf334c"
+    "elm_pipeline/vendor/cbramod/criss_cross_transformer.py": "90e90b8c98ca7eb543c44e32afc29674d3f71cb090692ad9f82db3a43edf334c",
+    "elm_pipeline/oracle.py": "4e159b8a57f018443c8d78e0f6cfb3e893c194fb96f00e4dd3f7808eee2ca86d",
+    "elm_pipeline/oracle_tasks.py": "530f21abbd4f615d3d6079938f07ecf43cb52993fc59587a2161cf2a575adeb7"
   },
   "server_acceptance": {
     "date": "2026-10-31",
@@ -106,5 +108,24 @@
     "verification_record": "metadata/checkpoint_publication_verification.json",
     "public_download_requires_token": false,
     "root_publication_revision": "2c105c15a31cfd31e9687b128d66f29eee3105c5"
+  },
+  "latest_Oracle_EEG_smoke": {
+    "date": "2026-11-02",
+    "server": "JS5 A100 80GB",
+    "Oracle_optimizer_steps": 10,
+    "EEG_optimizer_steps": 10,
+    "text_teacher_queries": 160,
+    "correct_Train_teacher": 95,
+    "complete_small_Val_teacher": 40,
+    "Oracle_AR_queries": 40,
+    "EEG_AR_queries_including_Oracle_control": 160,
+    "all_160_sample_visits_recomputed": true,
+    "optimizer_and_all_RNG_reload": true,
+    "source_config_raw_parser_summary_checked": true,
+    "all_owned_GPU_processes_exited": true,
+    "raw_or_Encoder_forward_run_in_this_smoke": false,
+    "vLLM_version": "0.9.2",
+    "H20_validated": false,
+    "long_Oracle_training_validated": false
   }
 }

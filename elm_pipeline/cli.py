@@ -16,7 +16,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--config", required=True, type=Path)
     p.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
-    p.add_argument("stage", choices=["check", "features", "train", "evaluate", "report"])
+    p.add_argument("stage", choices=["check", "features", "teacher", "oracle_train", "oracle_evaluate", "train", "evaluate", "report"])
     p.add_argument("--stop-at", type=int)
     p.add_argument("--tag", default="validation")
     args = p.parse_args()
@@ -31,8 +31,13 @@ def main():
     if any(type(i) is not int or i < 0 for i in cfg["gpus"]):
         p.error("Invalid GPU whitelist")
     if args.stage == "check":
+        oracle_pending = False
         for key in ("manifest_root", "encoder_bundle", "model", "oracle", "schema"):
             if not Path(cfg[key]).exists():
+                if (key == "oracle" and cfg.get("software_debug") and cfg.get("oracle_steps") == 10
+                        and Path(cfg.get("oracle_initial_checkpoint", "__missing_init__")).is_file()):
+                    oracle_pending = True
+                    continue
                 raise FileNotFoundError(key + ": " + cfg[key])
         selection = read(cfg["debug_selection"]) if cfg.get("debug_selection") else None
         checked = set()
@@ -59,6 +64,7 @@ def main():
         print(json.dumps({"status": "configuration_paths_and_task_fixture_passed",
                           "task_fixture": tasks.no_leak_fixture(),
                           "unique_input_paths_verified": len(checked),
+                          "Oracle_will_be_created_by_oracle_train": oracle_pending,
                           "GPU_used": False, "training_started": False}))
         return
     if args.stage == "report":
@@ -100,6 +106,12 @@ def main():
     if args.stage == "features":
         from .features import prepare
         result = prepare(cfg)
+    elif args.stage in ("teacher", "oracle_evaluate"):
+        from .oracle import generate
+        result = generate(cfg, digest, teacher=args.stage == "teacher")
+    elif args.stage == "oracle_train":
+        from .oracle import train
+        result = train(cfg, digest)
     elif args.stage == "train":
         from .training import train
         result = train(cfg, digest, args.stop_at)

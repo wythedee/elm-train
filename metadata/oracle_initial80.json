@@ -1,0 +1,13 @@
+{
+  "repo_id": "wythedee/elm-data",
+  "path": "releases/native200_20261101/assets/oracle_initial80.safetensors",
+  "bytes": 11643136,
+  "sha256": "df444c15f390c43bd7d5a019be14dfe7124467060d17c9090a13970762195dfd",
+  "role": "fresh_80_token_Oracle_initialization",
+  "step": 0,
+  "source_pt_sha256": "10541a31735faf3fcd866989f68b152c00adfdc24f402956a0514b66a6f0e437",
+  "tensor_equivalence_verified": true,
+  "trained_Oracle_or_Projector": false,
+  "contains_optimizer_or_RNG": false,
+  "placement_reason": "Additional training initializer distributed alongside the dataset; ModelScope model-repository API was temporarily unavailable"
+}
