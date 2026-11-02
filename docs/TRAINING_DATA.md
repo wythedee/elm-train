@@ -17,11 +17,13 @@ The complete HeBin H5 has 127,368 trials, while the historical manifests use
 including those trials, while the historical manifests retain their original
 57-subject selection. Do not silently add S59 to Train or Test.
 
-Upload is in progress. Wait for the completed release's `dataset_manifest.json`
-and the maintainer's completion confirmation before running the full dataset.
-A few existing manifests or a successful single-file download do not establish
-that all signal files have arrived. This repository is temporarily public for
-the owner-authorized collaborator download; the owner plans to make it private
+Upload is complete. On 2026-11-02 the maintainer independently checked all 66
+published file sizes and SHA256 values against the transfer records: zero
+missing/changed files, anonymous access working, uploader exited and lock free.
+The complete release includes `dataset_manifest.json`; the setup script can now
+download it directly. This validates transfer completeness, not model accuracy
+or uncapped raw-recording coverage. The repository remains public for the
+owner-authorized collaborator download; the owner plans to make it private
 afterward. Keep the original source attribution and terms with the data.
 
 ## Download on the training server

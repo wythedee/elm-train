@@ -53,7 +53,7 @@ bash tools/setup_server.sh
 
 | 资产 | 获取位置 | 使用方式 |
 |---|---|---|
-| 完整现有预处理数据 | [wythedee/elm-data](https://modelscope.cn/datasets/wythedee/elm-data)，`releases/native200_20261101/` | 16来源、447545段；约79.3GB信号文件，另有清单；**上传进行中** |
+| 完整现有预处理数据 | [wythedee/elm-data](https://modelscope.cn/datasets/wythedee/elm-data)，`releases/native200_20261101/` | 16来源、447545段；约79.3GB信号文件，另有清单；**已上传，66文件远端大小/SHA核对通过，公开可下载** |
 | 原始Qwen3-4B | [Qwen/Qwen3-4B](https://modelscope.cn/models/Qwen/Qwen3-4B) | 冻结语言模型，使用记录中的原始版本 |
 | 两路Encoder | [wythedee/elm](https://modelscope.cn/models/wythedee/elm)，`releases/20261031/encoders/` | 冻结提取类别/统计特征，约334MB |
 | Oracle10200 | 同一模型库的 `oracle/oracle10200.safetensors` | 冻结的80-token对齐目标及Oracle对照，约12MB |

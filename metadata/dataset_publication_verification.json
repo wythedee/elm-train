@@ -1,0 +1,18 @@
+{
+  "verification_date": "2026-11-02",
+  "repo": "wythedee/elm-data",
+  "release": "releases/native200_20261101",
+  "status": "all_66_files_remote_size_and_sha256_verified",
+  "datasets": 16,
+  "EEG_bytes": 79297912428,
+  "manifest_rows": 447545,
+  "files_verified": 66,
+  "missing": 0,
+  "changed": 0,
+  "anonymous_access": true,
+  "uploader_exited": true,
+  "upload_lock_free": true,
+  "data_transited_developer_Mac": false,
+  "scope": "All files referenced by the historical 16-source preprocessed manifests, including the complete HeBin H5; not all original recordings in the shared dataset directory",
+  "this_verifies_training_or_independent_generalization": false
+}
